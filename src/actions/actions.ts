@@ -25,7 +25,6 @@ export async function ajouterClientSociete(data: z.infer<any>) {
       else if (e.code === "P2000") {
         return { success: false, error: "Un des champs est trop long" };
       }
-        
     }
     throw e;
   }
@@ -53,6 +52,23 @@ export async function ajouterClientCommune(data:z.infer<any>){
         return { success: false, error: "Un des champs est trop long" };
       }
         
+    }
+    throw e;
+  }
+}
+
+export async function deleteClient(email:string){
+  try{
+    const deleteClient = await prisma.client.delete({
+      where:{
+        email:email
+      }
+    })
+    return { success: true };
+  }
+  catch(e){
+    if (e instanceof Prisma.PrismaClientKnownRequestError){
+      return {success:false, error:"Une erreur est survenue lors de la suppression!"}
     }
     throw e;
   }

@@ -1,6 +1,7 @@
 import { Client, columns } from "./ClientData/Client"
 import { DataTable } from "./ClientData/DataTable"
 import { Prisma, PrismaClient } from "@prisma/client"
+import { deleteClient } from "@/actions/actions";
 
 
 async function getData(): Promise<Client[]> {
@@ -13,12 +14,13 @@ async function getData(): Promise<Client[]> {
   }
 }
 
+
 export default async function ListClient() {
-    const data = await getData()
-    return (
-      <div>
-        <DataTable columns={columns} data={data} />
-      </div>
-    )
-  }
+  const data = await getData()
+  return (
+    <div>
+      <DataTable columns={columns} data={data}  />
+    </div>
+  )
+}
 

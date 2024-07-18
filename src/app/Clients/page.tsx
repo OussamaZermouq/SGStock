@@ -3,6 +3,7 @@ import SideNavBar from "@/components/custom/SideNavBar";
 import Header from "@/custom/Header";
 import ListClient from "@/custom/contents/Clients/ListClient";
 import { Separator } from "@/components/ui/separator";
+import DeleteDialog from "@/components/custom/DeleteDialog";
 // const prisma = new PrismaClient();
 
 // async function insertClient() {
