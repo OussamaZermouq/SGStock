@@ -4,7 +4,6 @@ import SideNavBar from "@/components/custom/SideNavBar";
 import Header from "@/custom/Header";
 import ModifierClientForm from "@/custom/contents/Clients/modifierClientForm";
 import { Separator } from "@/components/ui/separator";
-
 export default async function Home() {
   return (
     <main className="h-screen grid grid-rows-[auto,1fr]">

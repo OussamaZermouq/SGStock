@@ -23,6 +23,7 @@ import {
     SelectTrigger,
     SelectValue,
   } from "@/components/ui/select";
+import { useRouter } from "next/navigation";
 
 const phoneRegex = new RegExp(/^([+]?[s0-9]+)([ ])?(d{3}|[0-9]+)([s]?[0-9])+$/);
 const formSchema = z.object({
@@ -55,6 +56,8 @@ const formSchema = z.object({
 });
 
 export default function ModifierClientForm() {
+  const router =useRouter();
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -68,7 +71,7 @@ export default function ModifierClientForm() {
       typeClient: "",
     },
   });
-
+  console.log(router.query)
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
@@ -196,7 +199,6 @@ export default function ModifierClientForm() {
             Modifier client
           </Button>
           </div>
-
     </div>
   );
 }
