@@ -3,27 +3,8 @@ import SideNavBar from "@/components/custom/SideNavBar";
 import Header from "@/custom/Header";
 import ListClient from "@/custom/contents/Clients/ListClient";
 import { Separator } from "@/components/ui/separator";
-import DeleteDialog from "@/components/custom/DeleteDialog";
-// const prisma = new PrismaClient();
-
-// async function insertClient() {
-//   await prisma.client.create({
-//     data: {
-//       name: "Test",
-//       email: "22222@test.com",
-//       telephone: 222222,
-//     },
-//   });
-// }
-
-// async function getClients() {
-//   const clients = await prisma.client.findMany();
-//   return clients;
-// }
 
 export default async function Home() {
-  // const clients = await getClients();
-  // console.table(clients);
   return (
     <main className="h-screen grid grid-rows-[auto,1fr]">
       <header className="col-span-full">

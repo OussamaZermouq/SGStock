@@ -3,7 +3,7 @@
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ContentPasteIcon from "@mui/icons-material/ContentPaste";
-import { MoreHorizontal, Router } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,24 +26,21 @@ import { Label } from "@/components/ui/label";
 import { deleteClient } from "@/actions/actions";
 import { useRouter } from "next/navigation";
 
-
 async function onDeleteClient(email: string) {
-    const resp = await deleteClient(email);
-    //please god forgive me for i have sinned to the lord i am only a humain.
-    if (resp.success) {
-      window.location.reload();
-    }
+  const resp = await deleteClient(email);
+  //please god forgive me for i have sinned to the lord i am only a humain.
+  if (resp.success) {
+    window.location.reload();
   }
+}
 
-
-
-export default function DialogComponent(props:any) {
-    
+export default function DialogComponent(props: any) {
   const client = props.row.original;
   const router = useRouter();
-  const hanldeUpdateClick = () =>{
-    router.push('Clients/modifierClient/[email]',query:{email:client.email});
-  }
+  const hanldeUpdateClick = () => {
+    console.log("test")
+    router.push(`/Clients/modifierClient/${client.id}`);
+  };
   return (
     <Dialog>
       <DropdownMenu>
@@ -62,7 +59,9 @@ export default function DialogComponent(props:any) {
             client
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={hanldeUpdateClick} >
+          <DropdownMenuItem
+            onClick={hanldeUpdateClick}
+          >
             {<EditIcon className="mr-2" />} Modifier Client
           </DropdownMenuItem>
 

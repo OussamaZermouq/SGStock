@@ -24,7 +24,8 @@ import {
     SelectValue,
   } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
-
+import { CustomContext } from "../../../../../context/context";
+import { Client } from "./ClientData/Client";
 const phoneRegex = new RegExp(/^([+]?[s0-9]+)([ ])?(d{3}|[0-9]+)([s]?[0-9])+$/);
 const formSchema = z.object({
   clientName: z.string().min(2, {
@@ -55,9 +56,8 @@ const formSchema = z.object({
   }),
 });
 
-export default function ModifierClientForm() {
-  const router =useRouter();
-
+export default function ModifierClientForm(props:any) {
+  const [email, setEmail] = React.useState<any>();
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -71,7 +71,6 @@ export default function ModifierClientForm() {
       typeClient: "",
     },
   });
-  console.log(router.query)
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
@@ -91,7 +90,7 @@ export default function ModifierClientForm() {
               <FormItem>
                 <FormLabel>Client Nom</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} defaultValue={props.client.nom}/>
                 </FormControl>
                 <FormMessage />
               </FormItem>

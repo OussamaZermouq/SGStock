@@ -7,6 +7,7 @@ import { deleteClient } from "@/actions/actions";
 import { Badge } from "@/components/ui/badge";
 import DialogComponent from "@/components/custom/Dialogs/DialogComponent";
 export type Client = {
+  id: number;
   nom: string | null;
   adresse: string;
   email: string;
