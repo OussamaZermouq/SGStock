@@ -67,7 +67,6 @@ export default function AjouterClientForm() {
           description: "Client ajouté avec succès",
         });
       } else {
-        console.log("MOK ITS NOT GOOD")
         toast({
           variant: "destructive",
           title: "Erreur",

@@ -32,3 +32,11 @@ enum ClientType {
   Societe
   Commune
 }
+
+model Category{
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  nom         String   @unique
+  description String? @default("")
+}

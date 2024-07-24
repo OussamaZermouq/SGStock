@@ -6,23 +6,8 @@ import PersonSharpIcon from "@mui/icons-material/PersonSharp";
 import { PrismaClient } from '@prisma/client';
 
 export function CardClientCount() {
-  const prisma = new PrismaClient();
 
-  // async function insertClient() {
-  //   await prisma.client.create({
-  //     data: {
-  //       name: "Test",
-  //       email: "22222@test.com",
-  //       telephone: 222222,
-  //     },
-  //   });
-  // }
 
-  async function getClients() {
-    const clientsCount = await prisma.client.count();
-    return clientsCount;
-  }
-  const clientsCount = getClients();
   return (
     <Card>
       <CardHeader>
@@ -30,7 +15,7 @@ export function CardClientCount() {
           <PersonSharpIcon className=".MuiIcon-fontSizeLarge row-span-3" />
           <div className="mx-10">
             <CardTitle className="">Client</CardTitle>
-            <div className=" text-4xl">{clientsCount}</div>
+            <div className=" text-4xl">10</div>
           </div>
         </div>
         <Separator />

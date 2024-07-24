@@ -14,6 +14,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Separator } from "../ui/separator";
 export default function SideNavBar() {
   const router = useRouter();
   return (
@@ -43,8 +44,24 @@ export default function SideNavBar() {
               
 
             </AccordionItem>
-
             <AccordionItem value="item-3">
+              <AccordionTrigger>
+                <GridViewIcon />
+                Produits
+              </AccordionTrigger>
+
+              <AccordionContent><Button variant={"ghost"}>Consulter les Produits</Button> </AccordionContent>
+              
+              <AccordionContent><Button variant={"ghost"}>Ajouter Produits</Button> </AccordionContent>
+              
+              <AccordionContent><Button variant={"ghost"}>Supprimer les Produits</Button> </AccordionContent>
+
+              <Separator />
+
+              <AccordionContent><Button variant={"ghost"} onClick={()=>router.push('/Categories')}>Consulter les Categories</Button> </AccordionContent>
+
+            </AccordionItem>
+            <AccordionItem value="item-4">
               <AccordionTrigger>
                 <BookmarkBorderIcon />
                 Commandes
@@ -56,18 +73,7 @@ export default function SideNavBar() {
               
               <AccordionContent><Button variant={"ghost"}>Supprimer les Commandes</Button> </AccordionContent>
             </AccordionItem>
-            <AccordionItem value="item-4">
-              <AccordionTrigger>
-                <GridViewIcon />
-                Produits
-              </AccordionTrigger>
-
-              <AccordionContent><Button variant={"ghost"}>Consulter les Produits</Button> </AccordionContent>
-              
-              <AccordionContent><Button variant={"ghost"}>Ajouter Produits</Button> </AccordionContent>
-              
-              <AccordionContent><Button variant={"ghost"}>Supprimer les Produits</Button> </AccordionContent>
-            </AccordionItem>
+            
           </Accordion>
         </div>
         <div className="my-5">

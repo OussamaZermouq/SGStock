@@ -1,25 +1,14 @@
 import { Client, columns } from "./ClientData/Client"
 import { DataTable } from "./ClientData/DataTable"
-import { Prisma, PrismaClient } from "@prisma/client"
-import { deleteClient } from "@/actions/actions";
-
-
-async function getData(): Promise<Client[]> {
-  const prisma = new PrismaClient();
-  try {
-    const clients = await prisma.client.findMany();
-    return clients;
-  } finally {
-    await prisma.$disconnect();
-  }
-}
-
+import { getClients } from "@/actions/actions"
 
 export default async function ListClient() {
-  const data = await getData()
+  const data = await getClients()
   return (
     <div>
-      <DataTable columns={columns} data={data}  />
+      {data ? <DataTable columns={columns} data={data}  />:
+      <h3>Erreur lors de chargement de la liste des clients</h3>
+      }
     </div>
   )
 }
