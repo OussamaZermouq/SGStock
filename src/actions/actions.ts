@@ -314,10 +314,16 @@ export async function ajouterMatiere(values: any, fournisseurid:any) {
     await prisma.matierePremiere.create({
       data: {
         nom: values.nom,
-        quantitee: values.quantitee,
         unite:values.unite,
-        fournisseurs:{
-         connect : {id :Number(fournisseurid)}
+        FournisseurMatierePremiere:{
+          create:[
+            {
+              quantitee: values.quantitee,
+              fournisseur:{
+                connect : {id :Number(fournisseurid)}
+              }
+            }
+          ]
         }
       },
     });
