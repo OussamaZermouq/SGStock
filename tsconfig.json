@@ -20,6 +20,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/custom/*":["./src/components/custom/*"],
+      "@/common/*":["./src/components/custom/contents/common/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

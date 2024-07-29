@@ -26,6 +26,7 @@ model Client {
   webSite   String?    @default("")
   city      String?    @default("")
   type      ClientType @default(Commune)
+  commandes Commande[]
 }
 
 enum ClientType {
@@ -33,10 +34,96 @@ enum ClientType {
   Commune
 }
 
-model Category{
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  nom         String   @unique
-  description String? @default("")
+model Category {
+  id          Int       @id @default(autoincrement())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  nom         String    @unique
+  description String?   @default("")
+  produit     Produit[]
+}
+
+model Produit {
+  id               Int               @id @default(autoincrement())
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  codeProduit      String
+  nomProduit       String
+  prixProduit      Int
+  quantiteProduit  Int
+  noteProduit      String?
+  imageProduit     String?
+  categorieId      Int
+  categorieProduit Category          @relation(fields: [categorieId], references: [id])
+  commmandes       ligneCommande[]
+  matierePremiere  MatierePremiere[]
+}
+
+model Commande {
+  id           Int             @id @default(autoincrement())
+  dateCommande DateTime
+  dateCreation DateTime        @default(now())
+  produits     ligneCommande[]
+  clientId     Int
+  client       Client          @relation(fields: [clientId], references: [id])
+  livraison    Livraison?
+}
+
+//might need to change this to many to many since we dont know if the delivery has multiple orders
+model Livraison {
+  id            Int             @id @default(autoincrement())
+  dateLivraison DateTime
+  status        LivraisonStatus @default(EnAttente)
+  commnadeId    Int             @unique
+  commande      Commande        @relation(fields: [commnadeId], references: [id])
+}
+
+enum LivraisonStatus {
+  EnAttente
+  Livre
+  Annule
+}
+
+model ligneCommande {
+  commandeId Int
+  produitId  Int
+  quantite   Int
+  commande   Commande @relation(fields: [commandeId], references: [id])
+  produit    Produit  @relation(fields: [produitId], references: [id])
+
+  @@id([commandeId, produitId])
+}
+
+model Fournisseur {
+  id                         Int                          @id @default(autoincrement())
+  createdAt                  DateTime                     @default(now())
+  updatedAt                  DateTime                     @updatedAt
+  nom                        String                       @unique
+  telephone                  String?
+  adresse                    String?
+  email                      String?
+  matierePremieres           MatierePremiere[]
+  FournisseurMatierePremiere FournisseurMatierePremiere[]
+}
+
+model FournisseurMatierePremiere {
+  fournisseurId     Int
+  fournisseur       Fournisseur     @relation(fields: [fournisseurId], references: [id])
+  matierePremiereId Int
+  matierePremiere   MatierePremiere @relation(fields: [matierePremiereId], references: [id])
+  quantitee         Int
+
+  @@id([fournisseurId, matierePremiereId])
+}
+
+model MatierePremiere {
+  id                         Int                          @id @default(autoincrement())
+  createdAt                  DateTime                     @default(now())
+  updatedAt                  DateTime                     @updatedAt
+  nom                        String                       @unique
+  quantitee                  Int
+  unite                      String
+  fournisseurs               Fournisseur[]
+  produits                   Produit[]
+  FournisseurMatierePremiere FournisseurMatierePremiere[]
 }

@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { deleteClient } from "@/actions/actions";
 import { Badge } from "@/components/ui/badge";
-import DialogComponent from "@/components/custom/Dialogs/DialogComponent";
+import DialogComponent from "@/components/custom/Dialogs/DialogComponentClient";
 export type Client = {
   id: number;
   nom: string | null;
@@ -17,14 +17,6 @@ export type Client = {
   type: ClientType;
   ICE: string | null;
 };
-
-async function onDeleteClient(email: string) {
-  const resp = await deleteClient(email);
-  //please god forgive me for i have sinned to the lord i am only a humain.
-  if (resp.success) {
-    window.location.reload();
-  }
-}
 
 export const columns: ColumnDef<Client>[] = [
   {
@@ -71,7 +63,7 @@ export const columns: ColumnDef<Client>[] = [
     accessorKey: "type",
     header: "Societe / Commune",
     cell: ({ row }) => {
-      const type = row.getValue("type");
+      const type:any = row.getValue("type");
       return <Badge>{type}</Badge>;
     },
   },

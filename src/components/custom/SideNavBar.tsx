@@ -7,6 +7,7 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import SettingsIcon from "@mui/icons-material/Settings";
+import FactoryIcon from '@mui/icons-material/Factory';
 import { useRouter } from 'next/navigation'
 import {
   Accordion,
@@ -74,6 +75,18 @@ export default function SideNavBar() {
               <AccordionContent><Button variant={"ghost"}>Supprimer les Commandes</Button> </AccordionContent>
             </AccordionItem>
             
+            <AccordionItem value="item-5">
+              <AccordionTrigger>
+                <FactoryIcon />
+                Fournisseurs
+              </AccordionTrigger>
+
+              <AccordionContent><Button variant={"ghost"} onClick={()=>router.push('/Fournisseurs')}>Consulter les Fournisseurs</Button> </AccordionContent>
+              
+              <AccordionContent><Button variant={"ghost"} onClick={()=>router.push('/Fournisseurs/Ajouterfournisseur')}>Ajouter Fournisseurs</Button> </AccordionContent>
+              <Separator />
+              <AccordionContent><Button variant={"ghost"} onClick={()=>router.push('/Fournisseurs/Matierespremieres')}>Consulter les M.Premieres</Button></AccordionContent>
+            </AccordionItem>
           </Accordion>
         </div>
         <div className="my-5">
@@ -82,10 +95,12 @@ export default function SideNavBar() {
             Configuration
           </Button>
         </div>
-        <div className="absolute bottom-0 left-10 h-16 w-16 ">
+        <div className="absolute  bottom-20">
+        <div className="sticky">
           <Button variant="destructive" className="font-semibold">
             Se Deconnecter
           </Button>
+        </div>
         </div>
       </div>
     </>

@@ -29,15 +29,17 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import AddIcon from '@mui/icons-material/Add';
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData, TValue, string> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  buttonTitle:string
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData, TValue, string>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+  buttonTitle,
+}: DataTableProps<TData, TValue,string>) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -53,28 +55,29 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    columnResizeMode:"onChange",
     state: {
       rowSelection,
       columnVisibility,
       columnFilters,
     },
   });
+  
 
   return (
-    
     <div>
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter categories..."
+          value={(table.getColumn("nom")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("nom")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
         <Button variant={"outline"} className="mx-2">
           <AddIcon />
-          Ajouter Client
+          {buttonTitle}
         </Button>
          <DropdownMenu>
           <DropdownMenuTrigger asChild>

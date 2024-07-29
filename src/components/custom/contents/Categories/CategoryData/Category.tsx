@@ -27,7 +27,7 @@ export const columns: ColumnDef<Categorie>[] = [
     header: "Actions",
     cell: ({ row }) => {
       return (
-        <CategorieListActions row={row}/>
+          <CategorieListActions row={row}/>
       );
     },
   },

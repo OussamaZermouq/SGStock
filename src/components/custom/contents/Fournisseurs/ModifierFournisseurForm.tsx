@@ -1,9 +1,10 @@
 "use client";
+import { useToast } from "@/components/ui/use-toast";
 import * as React from "react";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
+import { ajouterCategorie, modifierCategorie, modifierFournisseur } from "@/actions/actions";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -15,14 +16,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
-import { ajouterClientCommune } from "@/actions/actions";
+
+
 const phoneRegex = new RegExp(/^([+]?[s0-9]+)([ ])?(d{3}|[0-9]+)([s]?[0-9])+$/);
 const formSchema = z.object({
-  communeNom: z.string().min(2, {
+  fournisseurNom: z.string().min(2, {
     message: "Le nom du commune doit avoir au moins 2 characters.",
   }),
-  communeTel: z
+  fournisseurTel: z
     .string()
     .regex(phoneRegex, {
       message: "Le numero de telephone doit etre valide.",
@@ -31,83 +32,65 @@ const formSchema = z.object({
       message: "Le telephone doit avoir au moins 10 chiffres.",
     }),
 
-    communeAdr: z.string({
+  fournisseurAdr: z.string({
     required_error: "Veuillez saisir une adresse.",
   }),
-  communeEmail: z.string().email({
+  fournisseurEmail: z.string().email({
     message: "Veuillez saisir un email valide.",
-  }),
-  communeCity: z.string({
-    required_error: "Veuillez saisir une ville.",
   }),
 });
 
-export default function AjouterClientForm() {
+
+export default function ModifierFournisseurForm(props: any) {
   const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      communeNom: "",
-      communeTel: "",
-      communeAdr: "",
-      communeEmail: "",
-      communeCity: "",
+      fournisseurNom: props.fournisseur.getValue('nom'),
+      fournisseurTel: props.fournisseur.getValue('telephone'),
+      fournisseurAdr: props.fournisseur.getValue('adresse'),
+      fournisseurEmail: props.fournisseur.getValue('email'),
     },
   });
 
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
     try {
-      const response = await ajouterClientCommune(values);
-      console.log(response);
+      const response = await modifierFournisseur(props.fournisseur.getValue('id'),values);
       if (response.success) {
-        
         toast({
           title: "Succès",
-          description: "Client ajouté avec succès",
+          description: "Fournisseur modifié avec succès",
         });
+        window.location.reload();
       } else {
         toast({
           variant: "destructive",
           title: "Erreur",
-          description: response.error || "Erreur lors de l'ajout du client",
+          description:
+            response.error || "Erreur lors de la modfiication du Fournisseur",
         });
       }
     } catch (e) {
       toast({
         variant: "destructive",
         title: "Erreur",
-        description: "Erreur lors de l'ajout du client",
+        description: "Erreur lors de la modification du Fournisseur",
       });
       console.error(e);
     }
   }
-
   return (
     <div className="flex flex-col ">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <div className="grid grid-cols-2 gap-4 mx-9">
+          <div className="grid grid-cols-2 gap-4 mx-9 m-10">
             <FormField
               control={form.control}
-              name="communeNom"
+              name="fournisseurNom"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nom Commune</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="communeTel"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Client Telephone</FormLabel>
+                  <FormLabel>Nom Fournisseur</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -117,10 +100,10 @@ export default function AjouterClientForm() {
             />
             <FormField
               control={form.control}
-              name="communeAdr"
+              name="fournisseurTel"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Adresse commune</FormLabel>
+                  <FormLabel>Fournisseur telephone</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -128,13 +111,12 @@ export default function AjouterClientForm() {
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
-              name="communeEmail"
+              name="fournisseurEmail"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Commune email</FormLabel>
+                  <FormLabel>Fournisseur Email</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -142,13 +124,12 @@ export default function AjouterClientForm() {
                 </FormItem>
               )}
             />
-            
             <FormField
               control={form.control}
-              name="communeCity"
+              name="fournisseurAdr"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Commune ville</FormLabel>
+                  <FormLabel>Fournisseur adresse</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -158,8 +139,8 @@ export default function AjouterClientForm() {
             />
           </div>
           <div className="flex justify-end mt-12 px-12">
-            <Button type="submit" className="w-32 justify-end">
-              Ajouter client
+            <Button type="submit" className="w-auto justify-end">
+              Modifier Fournisseur
             </Button>
           </div>
         </form>
