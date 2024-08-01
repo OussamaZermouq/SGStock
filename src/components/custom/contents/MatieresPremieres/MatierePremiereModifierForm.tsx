@@ -4,8 +4,15 @@ import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-import { ajouterCategorie, modifierCategorie } from "@/actions/actions";
+import { modifierMatiere } from "@/actions/actions";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Form,
   FormControl,
@@ -16,41 +23,45 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+
+
 const formSchema = z.object({
-  categorieNom: z.string().min(2, {
-    message: "Le nom du la categorie doit avoir au moins 2 characters.",
+  nom: z.string().min(2, {
+    message: "Le nom de la matiere doit avoir au moins 2 characters.",
   }),
-  categorieDescription: z.string().min(2, {
-    message: "Veuillez saisir un email valide.",
+  
+  unite: z.string({
+    required_error: "Veuillez saisir une unite.",
   }),
+  
 });
 
 export default function ModifierMatierePremiereForm(props: any) {
+  
   const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      categorieNom: props.categorie.getValue('nom'),
-      categorieDescription: props.categorie.getValue('description'),
+      nom: props.matiere.getValue('nom'),
+      unite: props.matiere.getValue('unite'),
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await modifierCategorie(props.categorie.getValue('id'),values);
+      const response = await modifierMatiere(values,props.matiere.getValue('id'));
       if (response.success) {
+        window.location.reload();
         toast({
           title: "Succès",
           description: "Categorie modifié avec succès",
         });
-        window.location.reload();
       } else {
         toast({
           variant: "destructive",
           title: "Erreur",
           description:
-            response.error || "Erreur lors de la modfiication de la categorie",
+            "Erreur lors de la modfiication de la categorie",
         });
       }
     } catch (e) {
@@ -64,43 +75,60 @@ export default function ModifierMatierePremiereForm(props: any) {
   }
   return (
     <div className="flex flex-col ">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <div className="grid grid-cols-2 gap-4 mx-9">
-            <FormField
-              control={form.control}
-              name="categorieNom"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nom categorie</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="categorieDescription"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description categorie</FormLabel>
-                  <FormControl>
-                    <Textarea {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="flex justify-end mt-12 px-12">
-            <Button type="submit" className="w-auto justify-end">
-              Modifier Categorie
-            </Button>
-          </div>
-        </form>
-      </Form>
-    </div>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <div className="grid grid-cols-2 gap-4 mx-9">
+          <FormField
+            control={form.control}
+            name="nom"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Libelle Matiere</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="unite"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Unite matiere</FormLabel>
+                <FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selectioner une unite" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Kg">Kg</SelectItem>
+                      <SelectItem value="l">l (litre)</SelectItem>
+                      <SelectItem value="m2">m2</SelectItem>
+                      <SelectItem value="m">m</SelectItem>
+
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="flex justify-end mt-12 px-12">
+          <Button type="submit" className="w-auto justify-end">
+            Modifier matiere
+          </Button>
+        </div>
+      </form>
+    </Form>
+  </div>
   );
 }

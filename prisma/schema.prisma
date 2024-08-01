@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {
@@ -102,15 +103,14 @@ model Fournisseur {
   telephone                  String?
   adresse                    String?
   email                      String?
-  matierePremieres           MatierePremiere[]
-  FournisseurMatierePremiere FournisseurMatierePremiere[]
+  matierePremieres           FournisseurMatierePremiere[]
 }
 
 model FournisseurMatierePremiere {
   fournisseurId     Int
-  fournisseur       Fournisseur     @relation(fields: [fournisseurId], references: [id])
+  fournisseur       Fournisseur     @relation(fields: [fournisseurId], references: [id], onDelete: Cascade)
   matierePremiereId Int
-  matierePremiere   MatierePremiere @relation(fields: [matierePremiereId], references: [id])
+  matierePremiere   MatierePremiere @relation(fields: [matierePremiereId], references: [id], onDelete: Cascade)
   quantitee         Int
 
   @@id([fournisseurId, matierePremiereId])
@@ -122,7 +122,6 @@ model MatierePremiere {
   updatedAt                  DateTime                     @updatedAt
   nom                        String                       @unique
   unite                      String
-  fournisseurs               Fournisseur[]
+  fournisseurs               FournisseurMatierePremiere[]
   produits                   Produit[]
-  FournisseurMatierePremiere FournisseurMatierePremiere[]
 }

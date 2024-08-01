@@ -22,20 +22,29 @@ import {
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import ModifierMatierePremiereForm from "../MatierePremiereModifierForm";
-import { deleteCategorie } from "@/actions/actions";
+import { deleteCategorie, deleteMatiere } from "@/actions/actions";
 import { useToast } from "@/components/ui/use-toast";
 
 export default function MatieresPremieresListActions(props: any) {
   const { toast } = useToast();
   async function onDeleteClick(id: number) {
-    const out = await deleteCategorie(id);
+    const out = await deleteMatiere(id);
     if (out.success) {
       window.location.reload();
+      toast({
+        title: "Succès",
+        description: "Matiere supprimé avec succès",
+      });
     }
-    toast({
-      title: "Succès",
-      description: "Categorie supprimé avec succès",
-    });
+    else{
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description:
+          "Erreur lors de la suppression de la matiere",
+      });
+    }
+
   }
 
   return (
@@ -46,7 +55,7 @@ export default function MatieresPremieresListActions(props: any) {
           <DialogHeader>
             <DialogTitle>Etes vous sure?</DialogTitle>
             <DialogDescription>
-              Voulez vous vraiment supprimer cette categorie
+              Voulez vous vraiment supprimer cette matiere
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="sm:justify-start">
@@ -61,9 +70,9 @@ export default function MatieresPremieresListActions(props: any) {
         <DrawerTrigger>{<Edit />}</DrawerTrigger>
         <DrawerContent className="flex justify-center content-center">
           <DrawerHeader>
-            <DrawerTitle>Modifier cette categorie</DrawerTitle>
+            <DrawerTitle>Modifier cette matiere</DrawerTitle>
             <DrawerDescription>
-              <ModifierMatierePremiereForm categorie={props.row} />
+              <ModifierMatierePremiereForm matiere={props.row} />
             </DrawerDescription>
           </DrawerHeader>
         </DrawerContent>
