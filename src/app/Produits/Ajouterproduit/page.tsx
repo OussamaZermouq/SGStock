@@ -1,9 +1,10 @@
 import * as React from "react";
+import Dashboard from "@/components/custom/contents/DashBoard";
 import SideNavBar from "@/components/custom/SideNavBar";
 import Header from "@/custom/Header";
-import ListClient from "@/custom/contents/Clients/ListClient";
+import AjouterClientForm from "@/custom/contents/Clients/ajouterClientForm";
 import { Separator } from "@/components/ui/separator";
-import ListProduit from "@/components/custom/contents/Produits/ListProduits";
+import AjouterProduitForm from "@/components/custom/contents/Produits/AjouterProduitForm";
 
 export default async function Home() {
   return (
@@ -19,12 +20,10 @@ export default async function Home() {
           <SideNavBar />
         </aside>
         <section className="p-4 m-10 overflow-auto">
-          <div className="col-span-3">
-            <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-12">
-              Liste des Produits
-            </h3>
-            <ListProduit />
-          </div>
+          <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-12">
+            Ajouter Produit
+          </h3>
+          <AjouterProduitForm />
         </section>
       </div>
     </main>

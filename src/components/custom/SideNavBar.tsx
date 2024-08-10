@@ -20,7 +20,7 @@ export default function SideNavBar() {
   const router = useRouter();
   return (
     <>
-      <div className="my-10 mx-10 overflow-auto">
+      <div className="my-10 mx-10 sticky-0">
         <div className="my-5">
           <Button variant="ghost" className="font-semibold" onClick={()=> router.push('/')}>
             <DashboardIcon />
@@ -51,7 +51,7 @@ export default function SideNavBar() {
                 Produits
               </AccordionTrigger>
 
-              <AccordionContent><Button variant={"ghost"}>Consulter les Produits</Button> </AccordionContent>
+              <AccordionContent><Button variant={"ghost"} onClick={()=> router.push('/Produits')}>Consulter les Produits</Button> </AccordionContent>
               
               <AccordionContent><Button variant={"ghost"}>Ajouter Produits</Button> </AccordionContent>
               

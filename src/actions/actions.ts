@@ -2,9 +2,6 @@
 import { Prisma, Client } from "@prisma/client";
 import prisma from "@/lib/db";
 import { z } from "zod";
-import { error } from "console";
-import { Trophy } from "lucide-react";
-import { SubContent } from "@radix-ui/react-dropdown-menu";
 
 export async function getClientById(id: number): Promise<Client | null> {
   try {
@@ -333,12 +330,45 @@ export async function getMatieres() {
   }
 }
 
+export async function getMatieresDispo(){
+  try {
+    const matieresWithPositiveQuantities = await prisma.fournisseurMatierePremiere.groupBy({
+      by: ['matierePremiereId'],
+      _sum: {
+        quantitee: true,
+      },
+      having: {
+        quantitee: {
+          _sum: {
+            gt: 0,
+          },
+        },
+      },
+    });
+  
+    const matierePremiereIds = matieresWithPositiveQuantities.map(m => m.matierePremiereId);
+  
+    const matierePremieres = await prisma.matierePremiere.findMany({
+      where: {
+        id: {
+          in: matierePremiereIds,
+        },
+      },
+    });
+  
+    return matierePremieres;
+  } catch (e) {
+    throw e;
+  }
+}
+
 export async function ajouterMatiere(values: any, fournisseurid: any) {
   try {
     await prisma.matierePremiere.create({
       data: {
         nom: values.nom,
         unite: values.unite,
+        quantiteeMatiere:values.quantitee,
         fournisseurs: {
           create: [
             {
@@ -362,6 +392,7 @@ export async function ajouterMatiere(values: any, fournisseurid: any) {
     };
   }
 }
+
 export async function deleteMatiere(matierePremiereId: number) {
   try {
     const deletedMatierePremiere = await prisma.matierePremiere.delete({
@@ -449,17 +480,35 @@ export async function ajouterFournisseurMaitere(values:any, matiereId:number){
             id:matiereId,
         }
       },
-        quantitee:values.quantitee,
+      quantitee:values.quantitee,
     }
   })
+  const quantiteeInit = await prisma.matierePremiere.findUnique({
+    where: {
+      id: matiereId
+    },
+    select:{
+      quantiteeMatiere:true,
+    },
+  })
+  console.log(quantiteeInit)
+  // await prisma.matierePremiere.update({
+    // where:{
+      // id:matiereId
+    // },
+    // data:{
+      // quantiteeMatiere : quantiteeInit + values.quantitee
+    // }
+  // })
   return{
     success:true
     }
   }
   catch(e){
+    console.error(e);
     return {
       success: false,
-      message: e,
+      message: "erreur lors de l'ajout",
     };
   }
 }
@@ -486,4 +535,202 @@ export async function deleteFournisseurMatiere(matierePremiereId:number, fournis
     }
   }
 
+}
+
+
+//Produit
+
+export async function getProduits(){
+  try {
+    const produit = await prisma.produit.findMany({
+      include: {
+        categorieProduit:true,
+        produitMatiere:true,
+      }
+    });
+    return produit;
+  } catch (error) {
+    throw error
+  }
+}
+export async function checkMatiereStock(matiereId: number) {
+  const stock = await prisma.fournisseurMatierePremiere.groupBy({
+    by: ['matierePremiereId'],
+    where: {
+      matierePremiereId: matiereId,
+    },
+    _sum: {
+      quantitee: true,
+    },
+  });
+
+  return stock.length > 0 ? stock[0]._sum.quantitee : 0; // Assuming stock returns an array with summed quantity
+}
+
+export async function ajouterProduit(values: any, produitImage?: string) {
+  // Check if the stock is available first for the matierePremiere
+  const stockChecks = await Promise.all(
+    values.matiereP.map(async (matiere: any) => {
+      const stock = await checkMatiereStock(matiere.id);
+      return {
+        matiereId: matiere.id,
+        hasStock: matiere.quantity <= stock,
+      };
+    })
+  );
+  
+  // Check if any material does not have enough stock
+  const outOfStock = stockChecks.find(stock => !stock.hasStock);
+
+  if (outOfStock) {
+    return {
+      success: false,
+      message: `Stock non disponible pour l'article avec ID ${outOfStock.matiereId}`,
+    };
+  }
+  
+
+  // Proceed with creating the product if all materials have enough stock
+  try {
+    await prisma.produit.create({
+      data: {
+        codeProduit: values.codeProduit,
+        nomProduit: values.nomProduit,
+        noteProduit: values.noteProduit,
+        prixProduit: values.prixProduit,
+        quantiteProduit: values.quantiteeProduit,
+        imageProduit: produitImage,
+        categorieProduit: {
+          connect: {
+            id: Number(values.categorieId),
+          },
+        },
+        produitMatiere: {
+          create: values.matiereP.map((matiere: any) => ({
+            Matiere: {
+              connect: {
+                id: Number(matiere.id),
+              },
+            },
+            quantitee: matiere.quantity,
+          })),
+        },
+      },
+    });
+    const quantiteeUpdate = await Promise.all(
+      stockChecks.map(async (matiere:any) => {
+        await prisma.matierePremiere.update({
+          where:{
+            id:matiere.matiereId
+          },
+          data:{
+            quantiteeMatiere: {
+              decrement: values.matiereP.find(value => value.id===matiere.matiereId).quantity
+            }
+          }
+        })
+      })
+    )
+    return {
+      success: true,
+    };
+  } catch (e) {
+    console.error(e);
+    return {
+      success: false,
+      message: "Une Erreur est survenue",
+    };
+  }
+}
+
+export async function getProduitMatiere(id:any) {
+  try {
+    const matiereP = await prisma.produitMatiere.findMany({
+      where:{
+        produitId: id
+      }
+    })
+    console.log(matiereP)
+    return matiereP;
+  } catch (error) {
+    return {
+      success:false,
+      message: "Une Erreur est survenue",
+    }
+  }
+  
+}
+
+
+
+export async function modifierProduit(values:any){
+  try{
+    return await prisma.$transaction(async (prisma) => {
+      // Update the produit
+      const updatedProduit = await prisma.produit.update({
+        where: { id: values.produitId },
+        data: {
+          nomProduit: values.nomProduit,
+          codeProduit:values.codeProduit,
+          prixProduit:values.prixProduit,
+          quantiteProduit:values.quantiteeProduit,
+          noteProduit:values.noteProduit,
+          imageProduit:values.imageUrl,
+          categorieId:Number(values.categorieId),
+        },
+      });
+  
+      // Update the quantitee for each MatierePremiere
+      for (const update of values.matiereP) {
+        await prisma.produitMatiere.upsert({
+          where: { 
+            matiereId_produitId:{
+              matiereId:update.id,
+              produitId:values.produitId
+            }
+          },
+          update: {
+            quantitee: update.quantity,
+          },
+          create: {
+            produitId:values.produitId,
+            matiereId:update.id,
+            quantitee:update.quantity
+          },
+        });
+      }
+  
+      return {
+        success: true,
+        message: "Produit modifié avec succès",
+      };
+    });
+    
+  }
+  catch(e){
+    console.error(e)
+    return {
+      success:false,
+      message:"une erreur est survenue"
+    }
+  }
+}
+
+export async function deleteProduit(id:any){
+  try {
+    await prisma.produit.delete({
+      where:{
+        id:id,
+      }
+    })
+    return{
+      success:true,
+    }
+  } catch (error) {
+    console.error(error)
+    return {
+      success:false,
+      message:"erreur lors de la suppression"
+    }
+  }
 }

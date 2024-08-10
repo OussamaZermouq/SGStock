@@ -23,7 +23,7 @@ import AjouterFournisseurMatiereForm from "../ajouterFournisseurMatiereForm";
 export type MatieresPremieres = {
   id: number;
   nom: string | null;
-  quantitee: number;
+  quantiteeMatiere: number;
   fournisseur: Fournisseur;
   FournisseurMatierePremiere: FournisseurMatierePremiere[];
 };
@@ -52,19 +52,12 @@ export const columns: ColumnDef<MatieresPremieres>[] = [
     header: "Nom",
   },
   {
-    id: "FournisseurMatierePremiere",
-    accessorKey: "FournisseurMatierePremiere",
+    accessorKey: "quantiteeMatiere",
     header: "Quantitee",
     cell: ({ row }) => {
-      const linkData: FournisseurMatierePremiere[] =
-        row.getValue("fournisseurs");
-      let sum = 0;
-      {
-        linkData.map((item) => (sum += item.quantitee));
-      }
       return (
         <div>
-          <Badge color="success">{sum}</Badge>
+          <Badge color="success">{row.getValue("quantiteeMatiere")}</Badge>
         </div>
       );
     },

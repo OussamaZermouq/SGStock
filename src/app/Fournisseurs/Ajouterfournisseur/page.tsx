@@ -21,7 +21,7 @@ export default async function Home() {
         </aside>
         <section className="p-4 m-10 overflow-auto">
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-12">
-            Ajouter Foursnisseur
+            Ajouter Fournisseur
           </h3>
           <AjouterFournisseurForm />
         </section>
