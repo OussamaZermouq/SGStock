@@ -189,7 +189,6 @@ export default function ModifierProduitForm(props: any) {
       imageUrl,
     };
 
-    console.log("Form values:", formData);
     try {
       const response = await modifierProduit(formData);
       if (response.success) {

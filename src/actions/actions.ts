@@ -491,7 +491,6 @@ export async function ajouterFournisseurMaitere(values:any, matiereId:number){
       quantiteeMatiere:true,
     },
   })
-  console.log(quantiteeInit)
   // await prisma.matierePremiere.update({
     // where:{
       // id:matiereId
@@ -650,7 +649,6 @@ export async function getProduitMatiere(id:any) {
         produitId: id
       }
     })
-    console.log(matiereP)
     return matiereP;
   } catch (error) {
     return {
@@ -717,6 +715,7 @@ export async function modifierProduit(values:any){
 }
 
 export async function deleteProduit(id:any){
+  //update the matierepremiere as well
   try {
     await prisma.produit.delete({
       where:{
