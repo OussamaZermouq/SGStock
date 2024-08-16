@@ -739,7 +739,11 @@ export async function getCommandes(){
   try {
     const commandes = await prisma.commande.findMany({
       include:{
-        produits:true,
+        produits:{
+          include:{
+            produit:true
+          }
+        },
         livraison:true,
       }
     })
@@ -751,6 +755,7 @@ export async function getCommandes(){
 
 
 export async function ajouterCommande(data: any) {
+  console.log(data)
   try {
     return await prisma.$transaction(async (prisma) => {
       // Create the Commande

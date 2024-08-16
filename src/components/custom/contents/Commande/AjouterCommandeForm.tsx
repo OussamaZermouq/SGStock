@@ -99,11 +99,12 @@ export default function AjouterCommandeForm() {
     fetchData();
   }, []);
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    
     let output;
     if (!livraisonEnabled) {
       delete values.dateLivraison;
       delete values.statusLivraison;
-      output = await ajouterCommande(values);
+      output = await ajouterCommande({...values,qteCommande});
     } 
     else {
       if (values.dateLivraison && values.statusLivraison) {

@@ -18,7 +18,6 @@ export default function Page() {
     if (params?.id) {
       getClientById(parseInt(params.id)).then((client) => {
         setClient(client);
-        console.log(client)
       });
     }}
     fetchClient();
