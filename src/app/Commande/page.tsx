@@ -4,6 +4,7 @@ import Header from "@/custom/Header";
 import ListClient from "@/custom/contents/Clients/ListClient";
 import { Separator } from "@/components/ui/separator";
 import ListProduit from "@/components/custom/contents/Produits/ListProduits";
+import ListCommande from "@/components/custom/contents/Commande/ListCommande";
 
 export default async function Home() {
   return (
@@ -14,16 +15,16 @@ export default async function Home() {
         </div>
         <Separator />
       </header>
-      <div className="grid grid-cols-[auto,1fr] gap-4 ">
+      <div className="grid grid-cols-[auto,1fr] gap-4">
         <aside className="w-72">
           <SideNavBar />
         </aside>
-        <section className="p-4 m-10 overflow-auto ">
+        <section className="p-4 m-10 overflow-auto">
           <div className="col-span-3">
             <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-12">
-              Liste des Produits
+              Liste des Commandes
             </h3>
-            <ListProduit />
+            <ListCommande />
           </div>
         </section>
       </div>

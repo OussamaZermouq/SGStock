@@ -62,7 +62,9 @@ model Commande {
   id           Int             @id @default(autoincrement())
   dateCommande DateTime
   dateCreation DateTime        @default(now())
+  code         String
   clientId     Int
+  status       commandeStatus
   client       Client          @relation(fields: [clientId], references: [id])
   livraison    Livraison?
   produits     ligneCommande[]
@@ -127,4 +129,11 @@ enum LivraisonStatus {
   EnAttente
   Livre
   Annule
+}
+
+enum commandeStatus {
+  Annule
+  EnAttenteConfirmation
+  EnLivraison
+  Complet
 }

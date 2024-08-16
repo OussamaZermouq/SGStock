@@ -35,11 +35,11 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 
 const formSchema = z.object({
-  nomProduit: z.string().min(2, {
-    message: "Le nom du produit doit avoir au moins 2 caractères.",
-  }),
   codeProduit: z.string({
     required_error: "Le code du produit est requis.",
+  }),
+  nomProduit: z.string().min(2, {
+    message: "Le nom du produit doit avoir au moins 2 caractères.",
   }),
   prixProduit: z.number({
     coerce: true,
@@ -140,7 +140,7 @@ export default function AjouterClientSocieteForm() {
   }
 
   return (
-    <div className="flex flex-col border-2 drop-shadow-4xl rounded-xl p-2 bg-gradient-to-b from-zinc-900 border-zinc-900">
+    <div className="flex flex-col">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="grid grid-cols-2 gap-4 mx-9">
