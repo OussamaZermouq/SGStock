@@ -1,29 +1,41 @@
 "use client";
 
 import * as React from "react";
-
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/Icons";
+import { authenticate } from '@/app/lib/actions';
+
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
-  async function onSubmit(event: React.SyntheticEvent) {
+  async function handleFormSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
     setIsLoading(true);
+    setErrorMessage(null);
 
-    setTimeout(() => {
+    const formData = new FormData(event.target as HTMLFormElement);
+
+    try {
+      const error = await authenticate(undefined, formData);
+      if (error) {
+        setErrorMessage(error);
+      }
+    } catch (error) {
+      setErrorMessage("An unexpected error occurred.");
+    } finally {
       setIsLoading(false);
-    }, 3000);
+    }
   }
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={handleFormSubmit}>
         <div className="grid gap-2">
           <div className="grid gap-3">
             <Label className="sr-only" htmlFor="email">
@@ -31,6 +43,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             </Label>
             <Input
               id="email"
+              name="email"
               placeholder="name@example.com"
               type="email"
               autoCapitalize="none"
@@ -43,6 +56,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             </Label>
             <Input
               id="password"
+              name="password"
               placeholder="Password"
               type="password"
               autoCapitalize="none"
@@ -51,12 +65,15 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
               disabled={isLoading}
             />
           </div>
-          <Button disabled={isLoading}>
+          <Button type="submit" disabled={isLoading}>
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
             Se Connecter
           </Button>
+          {errorMessage && (
+            <p className="text-sm text-red-500">{errorMessage}</p>
+          )}
         </div>
       </form>
       <div className="relative">
