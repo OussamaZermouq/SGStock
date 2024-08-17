@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils"
 
 export function CommandeCard(props:{type:string, commandeCount:Number, color:string}) {
   return (
-    <Card className={cn("w-[350px] shadow-xl p-5 bg-gradient-to-t", props.color)}>
+    <Card className={cn("w-[350px] shadow-xl p-5 bg-gradient-to-b", props.color)}>
       <CardHeader>
         <CardTitle>Commandes</CardTitle>
         <CardDescription className="text-muted-foreground">Nombre de commande en {props.type}</CardDescription>

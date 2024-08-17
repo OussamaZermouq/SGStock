@@ -8,7 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useReducer, useState } from "react";
 
 export default function ProduitCommandeDetailsPreviewTable(produits: any) {
   // Calculate total outside the map
@@ -16,7 +15,7 @@ export default function ProduitCommandeDetailsPreviewTable(produits: any) {
   produits.produits.forEach((prod) => {
     calculatedTotal += parseFloat(prod.produit.prixProduit * prod.quantite);
   });
-
+  console.log(produits.produits)
   return (
     <>
       <Table>
@@ -28,7 +27,7 @@ export default function ProduitCommandeDetailsPreviewTable(produits: any) {
             <TableHead className="w-1/5">Code Produit</TableHead>
             <TableHead className="w-1/5">Nom Produit</TableHead>
             <TableHead className="w-1/5">Prix unitaire</TableHead>
-            <TableHead className="text-center w-1/5">Qte Stock</TableHead>
+            <TableHead className="text-center w-1/5">Qte. Commande</TableHead>
             <TableHead className="text-right w-1/5">Prix Total</TableHead>
           </TableRow>
         </TableHeader>
@@ -49,7 +48,7 @@ export default function ProduitCommandeDetailsPreviewTable(produits: any) {
                   }).format(parseFloat(prod.produit.prixProduit))}
                 </TableCell>
                 <TableCell className="text-center w-1/5">
-                  {prod.produit.quantiteProduit}
+                  {prod.quantite}
                 </TableCell>
                 <TableCell className="text-right w-1/5">
                   {new Intl.NumberFormat("fr-FR", {

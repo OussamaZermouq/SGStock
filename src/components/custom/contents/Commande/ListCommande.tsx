@@ -15,7 +15,7 @@ export default async function ListCommande() {
               return item.status.toString() === "Annule";
             }).length
           }
-          color="from-red-100"
+          color="from-red-500"
         />
         <CommandeCard
           type="EnAttenteConfirmation"
@@ -24,7 +24,7 @@ export default async function ListCommande() {
               return item.status.toString() === "EnAttenteConfirmation";
             }).length
           }
-          color="from-orange-100"
+          color="from-orange-500"
         />
         <CommandeCard
           type="EnLivraison"
@@ -33,7 +33,7 @@ export default async function ListCommande() {
               return item.status.toString() === "EnLivraison";
             }).length
           }
-          color="from-yellow-100"
+          color="from-yellow-500"
         />
         <CommandeCard
           type="Complet"
@@ -42,12 +42,13 @@ export default async function ListCommande() {
               return item.status.toString() === "Complet";
             }).length
           }
-          color="from-teal-100"
+          color="from-teal-500"
         />
       </div>
       <div className="shadow-lg rounded-lg p-5">
         {data ? (
           <DataTable
+            forCommande={true}
             columns={columns}
             data={data}
             buttonTitle="Ajouter Commande"

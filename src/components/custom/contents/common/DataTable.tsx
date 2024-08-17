@@ -8,9 +8,9 @@ import {
   ColumnFiltersState,
   getFilteredRowModel,
   useReactTable,
-  VisibilityState,  
+  VisibilityState,
 } from "@tanstack/react-table";
-import TuneIcon from '@mui/icons-material/Tune';
+import TuneIcon from "@mui/icons-material/Tune";
 import * as React from "react";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,7 +18,14 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -28,24 +35,27 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import AddIcon from '@mui/icons-material/Add';
-interface DataTableProps<TData, TValue, string> {
+import AddIcon from "@mui/icons-material/Add";
+interface DataTableProps<TData, TValue, String, Boolean> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  buttonTitle:string
+  buttonTitle: String;
+  forCommande: Boolean;
 }
 
-export function DataTable<TData, TValue, string>({
+export function DataTable<TData, TValue, String, Boolean>({
   columns,
   data,
   buttonTitle,
-}: DataTableProps<TData, TValue,string>) {
+  forCommande,
+}: DataTableProps<TData, TValue, string, Boolean>) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
-  
-  const [rowSelection, setRowSelection] = React.useState({})
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
   const table = useReactTable({
     data,
     columns,
@@ -55,20 +65,18 @@ export function DataTable<TData, TValue, string>({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
-    columnResizeMode:"onChange",
+    columnResizeMode: "onChange",
     state: {
       rowSelection,
       columnVisibility,
       columnFilters,
     },
   });
-  
-
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex items-start py-4">
         <Input
-          placeholder="Filter categories..."
+          placeholder="Chercher ..."
           value={(table.getColumn("nom")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("nom")?.setFilterValue(event.target.value)
@@ -79,7 +87,25 @@ export function DataTable<TData, TValue, string>({
           <AddIcon />
           {buttonTitle}
         </Button>
-         <DropdownMenu>
+        <div>
+        {forCommande && (
+          <Select onValueChange={(event) =>
+            (event==="None"? table.getColumn("status")?.setFilterValue(""):table.getColumn("status")?.setFilterValue(event))
+          }>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Status commande" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="None">Afficher tous</SelectItem>
+              <SelectItem value="Complet">Complet</SelectItem>
+              <SelectItem value="En Attente de Confirmation">En Attente de Confirmation</SelectItem>
+              <SelectItem value="Annule">Annule</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
+        </div>
+
+        <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
               <TuneIcon />
@@ -88,10 +114,7 @@ export function DataTable<TData, TValue, string>({
           <DropdownMenuContent align="end">
             {table
               .getAllColumns()
-              .filter(
-                
-                (column) => column.getCanHide()
-              )
+              .filter((column) => column.getCanHide())
               .map((column) => {
                 return (
                   <DropdownMenuCheckboxItem
@@ -104,7 +127,7 @@ export function DataTable<TData, TValue, string>({
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
-                )
+                );
               })}
           </DropdownMenuContent>
         </DropdownMenu>
