@@ -181,11 +181,9 @@ export default function SideNavBar() {
         </div>
         <div className="absolute  bottom-20">
           <div className="sticky">
-            <form>
               <Button variant="destructive" className="font-semibold" onClick={handleSignOut}>
                 Se Deconnecter
               </Button>
-            </form>
           </div>
         </div>
       </div>

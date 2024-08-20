@@ -2,7 +2,7 @@
 import { isRedirectError } from "next/dist/client/components/redirect";
 import { auth, signIn } from "../../../auth";
 import { AuthError } from "next-auth";
-import { signOut } from "next-auth/react";
+import { signOut } from "../../../auth";
 
 export async function authenticate(
   prevState: string | undefined,
@@ -26,9 +26,11 @@ export async function authenticate(
 
 export async function logOut() {
   try {
-    await signOut();
+    await signOut({
+      redirectTo: "/login",
+      redirect: true,
+    });
   } catch (error) {
-    
     if (isRedirectError(error)) {
       throw error;
     }
