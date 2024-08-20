@@ -825,3 +825,20 @@ export async function ajouterCommande(data: any) {
     };
   }
 }
+
+//AUTH TYPE BEAT
+
+export async function getUser(email:string){
+  try{
+    const user = await prisma.user.findUnique({
+      where:{
+        email:email,
+      }
+    })
+    return user;
+  }
+  catch(e){
+    console.error(e)
+    return null;
+  }
+}

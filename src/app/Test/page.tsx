@@ -1,46 +1,29 @@
-'use client';
-import { useState, ChangeEvent, FormEvent } from 'react';
-import axios from 'axios';
+"use client";
 
-export default function UploadImageForm() {
-  const [imageDataUri, setImageDataUri] = useState<string | null>(null);
-  const [imageUrl, setImageUrl] = useState<string>('');
+import { signOut, useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
 
-  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImageDataUri(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-      console.log(imageDataUri)
-    }
-  };
+export default function Sidebar() {
+  const { data: session } = useSession();
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (!imageDataUri) {
-      alert('Please select an image to upload.');
-      return;
-    }
-
-    try {
-      const response = await axios.post('/api/upload-image', { image: imageDataUri });
-      setImageUrl(response.data.url);
-    } catch (error) {
-      console.error('Error uploading image:', error);
+  const handleSignOutClick = async () => {
+    if (session) {
+      // Sign out the user and redirect to the home page
+      await signOut({ callbackUrl: '/' });
+    } else {
+      console.error("No active session found.");
     }
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input type="file" onChange={handleImageChange} />
-        <button type="submit">Upload Image</button>
-      </form>
-      {imageUrl && <img src={imageUrl} alt="Uploaded" />}
+    <div className="sidebar">
+      <p>
+        Session:
+        {session?.user?.email}
+      </p>
+      <Button onClick={handleSignOutClick}>
+        Se Déconnecter
+      </Button>
     </div>
   );
 }
