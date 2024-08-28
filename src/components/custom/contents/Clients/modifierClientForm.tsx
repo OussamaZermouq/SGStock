@@ -23,9 +23,12 @@ import {
     SelectTrigger,
     SelectValue,
   } from "@/components/ui/select";
-import { useRouter } from "next/navigation";
-import { CustomContext } from "../../../../../context/context";
-import { Client } from "./ClientData/Client";
+import { useParams } from "next/navigation";
+import { Client } from "@prisma/client";
+import { getClientById } from "@/actions/actions";
+import ModifierClientCommuneForm from "./modifierClientCommuneForm";
+import ModifierClientSocieteForm from "./modifierClientSocieteForm";
+  
 const phoneRegex = new RegExp(/^([+]?[s0-9]+)([ ])?(d{3}|[0-9]+)([s]?[0-9])+$/);
 const formSchema = z.object({
   clientName: z.string().min(2, {
@@ -57,147 +60,24 @@ const formSchema = z.object({
 });
 
 export default function ModifierClientForm(props:any) {
-  const [email, setEmail] = React.useState<any>();
-  // 1. Define your form.
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      clientName: "",
-      clientPrenom: "",
-      clientTel: "",
-      clientadr: "",
-      clientemail: "",
-      societe:"",
-      typeClient: "",
-    },
-  });
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
+
+  const params = useParams<{ id: string }>();
+  const [client, setClient] = React.useState<Client | null>(null);
+  React.useEffect(() => {
+    async function fetchClient(id: number) {
+        const clientdata = await getClientById(id);
+        setClient(clientdata);
+    }
+    if (params?.id) {
+      fetchClient(parseInt(params.id));
+    }
+  }, [params?.id]);
+
 
   return (
-    <div className="flex flex-col">
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="grid grid-cols-2 gap-4 mx-9">
-          <FormField
-            control={form.control}
-            name="clientName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Client Nom</FormLabel>
-                <FormControl>
-                  <Input {...field} defaultValue={props.client.nom}/>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="clientPrenom"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Client Prenom</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="societe"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nom de la societe</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="clientTel"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Client Telephone</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="clientadr"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Client adresse</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="clientemail"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Client email</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="typeClient"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Le Type du client.</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <SelectTrigger className="w-[280px]">
-                    <SelectValue placeholder="Choisir le type du client" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Type client</SelectLabel>
-                      <SelectItem value="Morale">Morale</SelectItem>
-                      <SelectItem value="Physique">Physique</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </FormItem>
-            )}
-          />
-
-        </div>
-      </form>
-    </Form>
-    <div className="flex justify-end mt-12 px-12">
-
-    <Button type="submit" className="w-32 justify-end">
-            Modifier client
-          </Button>
-          </div>
+    <div>
+      {client?.type==='Commune'&& <ModifierClientCommuneForm client={client}/>}
+      {client?.type==='Societe'&& <ModifierClientSocieteForm client={client}/>}
     </div>
   );
 }

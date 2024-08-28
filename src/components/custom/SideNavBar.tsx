@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import * as React from "react";
 import GridViewIcon from "@mui/icons-material/GridView";
@@ -17,9 +17,23 @@ import {
 } from "@/components/ui/accordion";
 import { Separator } from "../ui/separator";
 import { logOut } from "@/app/lib/actions";
-
+import Link from "next/link";
+import {
+  Bell,
+  CircleUser,
+  Cuboid,
+  Factory,
+  Home,
+  LineChart,
+  Menu,
+  Package,
+  Package2,
+  Search,
+  ShoppingCart,
+  Users,
+} from "lucide-react";
+import { Badge } from "../ui/badge";
 export default function SideNavBar() {
-  
   const router = useRouter();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const handleSignOut = async () => {
@@ -32,13 +46,62 @@ export default function SideNavBar() {
   };
 
   return (
-    <div>
-      <div className="my-10 mx-10 sticky-0">
+    <div className="flex-1  border-r bg-muted/40 md:block h-full max-h-screen flex flex-col gap-2">
+      <nav className="grid flex-grow items-start px-2 text-base font-medium lg:px-4 py-20">
+        <Link
+          href="/Dashboard"
+          className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted"
+        >
+          <Home className="h-4 w-4" />
+          Dashboard
+        </Link>
+        <Link
+          href="/Commande"
+          className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted"
+        >
+          <ShoppingCart className="h-4 w-4" />
+          Orders
+        </Link>
+        <Link
+          href="/Produits"
+          className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted"
+        >
+          <Package className="h-4 w-4" />
+          Products
+        </Link>
+        <Link
+          href="/Clients"
+          className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted"
+        >
+          <Users className="h-4 w-4" />
+          Customers
+        </Link>
+        <Link
+          href="/Fournisseurs"
+          className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted"
+        >
+          <Factory className="h-4 w-4" />
+          Fournisseurs
+        </Link>
+        <Link
+          href="/Fournisseurs/Matierespremieres"
+          className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted"
+        >
+          <Cuboid className="h-4 w-4" />
+          Matiere Premieres
+        </Link>
+      </nav>
+    </div>
+  );
+}
+{
+  /* 
+  <div className="my-10 mx-10 sticky-0">
         <div className="my-5">
           <Button
             variant="ghost"
             className="font-semibold"
-            onClick={() => router.push("/")}
+            onClick={() => router.push("/Dashboard")}
           >
             <DashboardIcon />
             Dashboard
@@ -186,7 +249,5 @@ export default function SideNavBar() {
               </Button>
           </div>
         </div>
-      </div>
-    </div>
-  );
+      </div>*/
 }

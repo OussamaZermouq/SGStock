@@ -1,15 +1,15 @@
 import * as React from "react";
-import { useParams } from "next/navigation";
-import { getClientById } from "@/actions/actions";
 import SideNavBar from "@/components/custom/SideNavBar";
 import Header from "@/custom/Header";
 import { Separator } from "@/components/ui/separator";
-import ModifierClientCommuneForm from "@/components/custom/contents/Clients/modifierClientCommuneForm";
-import ModifierClientSocieteForm from "@/components/custom/contents/Clients/modifierClientSocieteForm";
-import { Client } from "@/components/custom/contents/Clients/ClientData/Client";
-import ModifierClientForm from "@/components/custom/contents/Clients/modifierClientForm";
+import ListUsers from "@/components/custom/contents/Users/ListUsers";
+import { auth } from "../../../auth";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-export default function Page() {
+export default async function Home() {
+  const session = await auth()
   return (
     <main className="h-screen grid grid-rows-[auto,1fr]">
       <header className="col-span-full">
@@ -23,11 +23,21 @@ export default function Page() {
           <SideNavBar />
         </aside>
         <section className="p-4 m-10 overflow-auto">
-          <div className="col-span-3">
+          <div className="col-span-3 ">
             <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-12">
-              Modifier un client
+              <div className="flex flex-row gap-5 items-center">
+                Liste des Utilisateurs
+
+              </div>
+
             </h3>
-            <ModifierClientForm />
+            <div>
+            {session?.user.role === "ADMIN" ? <ListUsers />: 
+            <div>
+              <p className="text-lg font-bold">Vous n'avez pas l'autorisation de voir cette page </p>
+            </div>
+            }
+            </div>
           </div>
         </section>
       </div>

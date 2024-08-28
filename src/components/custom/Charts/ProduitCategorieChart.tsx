@@ -1,6 +1,6 @@
-"use client"
-import { TrendingUp } from "lucide-react"
-import { Pie, PieChart } from "recharts"
+"use client";
+import { TrendingUp } from "lucide-react";
+import { Pie, PieChart } from "recharts";
 import {
   Card,
   CardContent,
@@ -8,55 +8,57 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
-const chartData = [
-  { browser: "chrome", visitors: 275, fill: "red" },
-  { browser: "safari", visitors: 200, fill: "yellow" },
-  { browser: "firefox", visitors: 187, fill: "blue" },
-  { browser: "edge", visitors: 173, fill: "green" },
-  { browser: "other", visitors: 90, fill: "white" },
-]
-const chartConfig = {
-  visitors: {
-    label: "Visitors",
-  },
-  chrome: {
-    label: "Chrome",
-    color: "hsl(var(--chart-1))",
-  },
-  safari: {
-    label: "Safari",
-    color: "hsl(var(--chart-2))",
-  },
-  firefox: {
-    label: "Firefox",
-    color: "hsl(var(--chart-3))",
-  },
-  edge: {
-    label: "Edge",
-    color: "hsl(var(--chart-4))",
-  },
-  other: {
-    label: "Other",
-    color: "hsl(var(--chart-5))",
-  },
-} satisfies ChartConfig
+} from "@/components/ui/chart";
+import { useEffect, useState } from "react";
+import { getMatieresPremiereFiltered } from "@/actions/actions";
+
+// Array of predefined colors
+const colorPalette = [
+  "hsl(var(--chart-1))",
+  "hsl(var(--chart-2))",
+  "hsl(var(--chart-3))",
+  "hsl(var(--chart-4))",
+  "hsl(var(--chart-5))",
+  "hsl(var(--chart-6))",
+];
+
 export function ProduitCategorieChart() {
+  const [matierePStock, setMatierePStock] = useState<any[]>([]);
+  useEffect(() => {
+    async function fetchData() {
+      const matierepremiereData = await getMatieresPremiereFiltered();
+      const getRandomColor = () => {
+        return colorPalette[Math.floor(Math.random() * colorPalette.length)];
+      };
+      const formattedData = matierepremiereData?.map((item) => ({
+        browser: item.nom, 
+        visitors: item.quantiteeMatiere || 0,
+        fill: getRandomColor(),
+      }));
+
+      setMatierePStock(formattedData);
+    }
+
+    fetchData();
+  }, []);
+
   return (
-    <Card className="flex flex-col w-auto">
+    <Card className="flex flex-col w-auto p-5">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Pie Chart</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Stock Matiere Premiere</CardTitle>
+        <CardDescription className="text-muted-foreground">
+          Donnees depuis Aout - 2024
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
-          config={chartConfig}
+          config={{}}
           className="mx-auto aspect-square max-h-[250px]"
         >
           <PieChart>
@@ -64,18 +66,15 @@ export function ProduitCategorieChart() {
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Pie data={chartData} dataKey="visitors" nameKey="browser" />
+            <Pie data={matierePStock} label dataKey="visitors" nameKey="browser" />
           </PieChart>
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
         <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
+          Affichage du total des matieres premieres.
         </div>
       </CardFooter>
     </Card>
-  )
+  );
 }
