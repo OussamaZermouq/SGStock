@@ -27,9 +27,11 @@ import { Check, Cross, X } from "lucide-react";
 import { DataTable } from "../../common/DataTable";
 import { columns } from "../../Produits/ProduitData/Produit";
 import ProduitCommandeDetailsPreviewTable from "../ProduitCommandeDetailsPreviewTable";
+import { useRouter } from "next/navigation";
 
 export default function CommandeListActions(props: any) {
   const { toast } = useToast();
+  const router = useRouter();
   const [client, setClient] = React.useState<Client>();
   React.useEffect(() => {
     const fetchClient = async () => {
@@ -41,52 +43,11 @@ export default function CommandeListActions(props: any) {
     };
     fetchClient();
   }, [props.row.getValue("clientId")]);
-
-  async function onDeleteClick(id: number) {
-    const out = await deleteProduit(id);
-    if (out.success) {
-      window.location.reload();
-      toast({
-        title: "Succès",
-        description: "Matiere supprimé avec succès",
-      });
-    } else {
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Erreur lors de la suppression de la matiere",
-      });
-    }
-  }
   
 
   return (
     <div className="flex space-x-4">
-      <Dialog>
-        <DialogTrigger>{<DeleteForever />}</DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Etes vous sure?</DialogTitle>
-            <DialogDescription>
-              Voulez vous vraiment supprimer ce produit
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="sm:justify-start">
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={() => {
-                onDeleteClick(props.row.getValue("id"));
-              }}
-            >
-              Confirmer
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      <div>
-        <ModifierCommandeForm commande={props.row} />
-      </div>
+      
       <div>
         <Dialog>
           <DialogTrigger>{<RemoveRedEyeIcon />}</DialogTrigger>
@@ -167,7 +128,7 @@ export default function CommandeListActions(props: any) {
               </div>
             </div>
             <DialogFooter className="sm:justify-end">
-                <Button>Modifier Commande</Button>
+                <Button onClick={()=>{router.push(`/Commande/Modifiercommande/${props.row.getValue("id")}`)}}>Modifier Commande</Button>
                 <Button variant={'destructive'}>Supprimer Commande</Button>
 
             </DialogFooter>

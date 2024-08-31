@@ -72,9 +72,6 @@ export const columns: ColumnDef<Produit>[] = [
             ))}
         </div>
       );
-      //   return row.getValue("produits").map((prod) => {
-
-      //   });
     },
   },
   {

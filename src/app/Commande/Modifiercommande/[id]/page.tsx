@@ -8,12 +8,14 @@ import ModifierClientCommuneForm from "@/components/custom/contents/Clients/modi
 import ModifierClientSocieteForm from "@/components/custom/contents/Clients/modifierClientSocieteForm";
 import { Client } from "@/components/custom/contents/Clients/ClientData/Client";
 import ModifierClientForm from "@/components/custom/contents/Clients/modifierClientForm";
+import ModifierCommandeForm from "@/components/custom/contents/Commande/ModifierCommandeForm";
+import ModifierCommandeMiddleware from "@/components/custom/contents/Commande/ModifierCommandeMiddleware";
 
 export default function Page() {
   return (
     <main className="h-screen grid grid-rows-[auto,1fr]">
       <header className="col-span-full">
-        <div className="grid grid-cols-12 gap-4 justify-normal content-center m-2">
+        <div className="grid grid-cols-12 gap-4 justify-items-center content-center ">
           <Header />
         </div>
         <Separator />
@@ -22,12 +24,12 @@ export default function Page() {
         <aside className="w-72">
           <SideNavBar />
         </aside>
-        <section className="p-4 m-10 overflow-auto">
-          <div className="col-span-3">
+        <section className="p-4 m-10 overflow-auto w-fit justify-self-center">
+          <div className="col-span-3 ">
             <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-12">
-              Modifier un client
+              Modifier une commande
             </h3>
-            <ModifierClientForm />
+            <ModifierCommandeMiddleware />
           </div>
         </section>
       </div>

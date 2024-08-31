@@ -1,44 +1,92 @@
 import NextAuth from "next-auth";
-import Credentials from "next-auth/providers/credentials";
 import { authConfig } from "./auth.config";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { z } from "zod";
-import { sql } from "@vercel/postgres";
-import type { User } from "@/app/lib/definitions";
+import { getUser } from "@/actions/actions";
+import prisma from "@/lib/db";
 
-const bcrypt = require("bcrypt");
+const bcrypt = require('bcryptjs')
 
-async function getUser(email: string): Promise<User | undefined> {
-  try {
-    const user = await sql<User>`SELECT * FROM "Users" WHERE email=${email}`;
-    console.log(user)
-    return user.rows[0];
-  } catch (error) {
-    console.error("Failed to fetch user:", error);
-    throw new Error("Failed to fetch user.");
-  }
-}
-
-export const { auth, signIn, signOut } = NextAuth({
+export const { auth, signIn, signOut, handlers } = NextAuth({
   ...authConfig,
+  session: { strategy: 'jwt' },  // Use JWT for session management
   providers: [
-    Credentials({
+    CredentialsProvider({
       async authorize(credentials) {
-        const parsedCredentials = z
-          .object({ email: z.string().email(), password: z.string().min(3) })
-          .safeParse(credentials);
-
-        if (parsedCredentials.success) {
-          const { email, password } = parsedCredentials.data;
-          const user = await getUser(email);
-          if (!user) return null;
-          const passwordsMatch = await bcrypt.compare(password, user.password);
-
-          if (passwordsMatch) return user;
+        // Validate and fetch user from the database
+        const { email, password } = credentials;
+        const user = await getUser(email);
+        if (!user) {
+          throw new Error('No user found with the email');
+        }
+        const isValidPassword = await bcrypt.compare(password, user.password);
+        if (!isValidPassword) {
+          throw new Error('Invalid password');
         }
 
-        console.log("Invalid credentials");
-        return null;
+        // Return the user object with the role
+        return {
+          id: user.id,
+          email: user.email,
+          image:user.image,
+          role: user.role,  // Include role in user object
+        };
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.email = user.email;
+        token.image = user.image;
+        token.role = user.role; // Add role to JWT token
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      
+      session.user.id = token.id;
+      session.user.email = token.email;
+      session.user.image = token.image;
+      session.user.role = token.role; // Add role to session
+
+      return session;
+    },
+  },
 });
+
+
+// import NextAuth from "next-auth";
+// import { authConfig } from "./auth.config";
+// import Credentials from "next-auth/providers/credentials";
+// import { z } from "zod";
+// import { getUser } from "@/actions/actions";
+// import { PrismaAdapter } from "@auth/prisma-adapter";
+// import prisma from "@/lib/db";
+
+
+// var bcrypt = require('bcryptjs');
+// export const { auth, signIn, signOut, handlers } = NextAuth({
+//   ...authConfig,
+//   adapter:PrismaAdapter(prisma),
+//   session:{strategy:'jwt'},
+//   providers: [
+//     Credentials({
+//       async authorize(credentials) {
+//         const parsedCredentials = z
+//           .object({ email: z.string().email(), password: z.string().min(6) })
+//           .safeParse(credentials);
+//         if (parsedCredentials.success) {
+//           const { email, password } = parsedCredentials.data;
+//           const user = await getUser(email);
+//           if (!user) return null;
+//           const passwordMatch = await bcrypt.compare(password, user.password);
+//           if (passwordMatch) return user;
+//         }
+//         console.log("invalid credentials");
+//         return null;
+//       },  
+//     }),
+//   ],
+// });

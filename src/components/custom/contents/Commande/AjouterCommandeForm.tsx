@@ -135,7 +135,7 @@ export default function AjouterCommandeForm() {
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10 shadow-xl p-5 rounded-xl bg-slate-100">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10 shadow-xl p-5 rounded-xl">
           <h4 className="font-bold">Information Commande</h4>
           <div className="grid grid-cols-2 gap-4">
             <FormField

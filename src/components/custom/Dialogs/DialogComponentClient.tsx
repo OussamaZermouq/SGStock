@@ -26,20 +26,22 @@ import { Label } from "@/components/ui/label";
 import { deleteClient } from "@/actions/actions";
 import { useRouter } from "next/navigation";
 
-async function onDeleteClient(email: string) {
-  const resp = await deleteClient(email);
-  //please god forgive me for i have sinned to the lord i am only a humain.
-  if (resp.success) {
-    window.location.reload();
-  }
-}
+
 
 export default function DialogComponent(props: any) {
+  async function onDeleteClient(email: string) {
+    const resp = await deleteClient(email);
+    //please god forgive me for i have sinned to the lord i am only a humain.
+    if (resp.success) {
+      window.location.reload();
+    }
+  }
   const client = props.row.original;
   const router = useRouter();
   const hanldeUpdateClick = () => {
+    const idClient = client.id;
     console.log("test")
-    router.push(`/Clients/modifierClient/${client.id}`);
+    router.push(`/Clients/modifierClient/${idClient}`);
   };
   return (
     <Dialog>

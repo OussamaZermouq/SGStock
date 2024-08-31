@@ -27,6 +27,15 @@ export async function getClients(): Promise<Client[]> {
   }
 }
 
+export async function getClientCount() {
+  try {
+    const clientCount = await prisma.client.count();
+    return clientCount;
+  } catch (error) {
+    throw "erreur lors de la récupération du nombre de clients";
+  }
+}
+
 export async function ajouterClientSociete(data: z.infer<any>) {
   try {
     const newClient = await prisma.client.create({
@@ -243,6 +252,20 @@ export async function getFrounisseurs(maitereId?: number) {
     return fournisseurs;
   } catch (e) {
     throw e;
+  }
+}
+
+export async function getMatieresPremiereFiltered() {
+  try {
+    const data = await prisma.matierePremiere.findMany({
+      select: {
+        nom: true,
+        quantiteeMatiere: true,
+      },
+    });
+    return data;
+  } catch (error) {
+    throw error;
   }
 }
 
@@ -549,12 +572,25 @@ export async function getProduits() {
         categorieProduit: true,
         produitMatiere: true,
       },
+      take: 3,
+      orderBy: {
+        createdAt: "desc",
+      },
     });
     return produit;
   } catch (error) {
     throw error;
   }
 }
+
+export async function getProduitCount() {
+  try {
+    return await prisma.produit.count();
+  } catch (error) {
+    throw "Erreur lors de la recuperation des donnees";
+  }
+}
+
 export async function checkMatiereStock(matiereId: number) {
   const stock = await prisma.fournisseurMatierePremiere.groupBy({
     by: ["matierePremiereId"],
@@ -735,27 +771,54 @@ export async function deleteProduit(id: any) {
 
 //commande
 
-export async function getCommandes(){
+export async function getCommandes() {
   try {
     const commandes = await prisma.commande.findMany({
-      include:{
-        produits:{
-          include:{
-            produit:true
-          }
+      include: {
+        produits: {
+          include: {
+            produit: true,
+          },
         },
-        livraison:true,
-      }
-    })
+        livraison: true,
+      },
+    });
     return commandes;
   } catch (error) {
-    throw error
+    throw error;
   }
 }
 
+export async function getCommandeById(id: number) {
+  try {
+    const commande = await prisma.commande.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        produits: {
+          include: {
+            produit: true,
+          },
+        },
+      },
+    });
+    return commande;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getCommandeCount() {
+  try {
+    return await prisma.commande.count();
+  } catch (error) {
+    throw error;
+  }
+}
 
 export async function ajouterCommande(data: any) {
-  console.log(data)
+  console.log(data);
   try {
     return await prisma.$transaction(async (prisma) => {
       // Create the Commande
@@ -823,5 +886,118 @@ export async function ajouterCommande(data: any) {
       success: false,
       message: "Erreur lors de la création",
     };
+  }
+}
+
+//AUTH TYPE BEAT
+
+export async function getUser(email: string) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+    return user;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
+
+export async function getUsers(originId: string) {
+  //to only get the users except the one who is connected
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        id: {
+          not: {
+            equals: originId,
+          },
+        },
+      },
+    });
+    return users;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getUserById(id: string) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    return user;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function ajouterUtlisateur(values: any) {
+  try {
+    await prisma.user.create({
+      data: {
+        email: values.email,
+        password: values.password,
+        name: values.nom,
+        image: values.image,
+        role: values.role,
+      },
+    });
+    return {
+      success: true,
+      message: "Utilisateur ajouté avec succès",
+    };
+  } catch (error) {
+    return {
+      success: false,
+    };
+  }
+}
+
+export async function updateUser(values: any) {
+  try {
+    await prisma.user.update({
+      where: {
+        id: values.userId.id,
+      },
+      data: {
+        email: values.email,
+        password: values.password,
+        name: values.nom,
+        image: values.image,
+        role: values.role,
+      },
+    });
+    return {
+      success: true,
+      message: "Utilisateur ajouté avec succès",
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+    };
+  }
+}
+
+export async function deleteUser(id: string) {
+  try {
+    await prisma.user.delete({
+      where: {
+        id: id,
+      },
+    });
+    return{
+      success: true,
+    }
+  } catch (error) {
+    console.error(error)
+    return{
+      success: false,
+    }
   }
 }
