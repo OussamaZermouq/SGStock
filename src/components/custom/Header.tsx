@@ -13,14 +13,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Power } from "lucide-react";
+import { Power, UserRound, UsersRound } from "lucide-react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export default function Header() {
   const session = useSession();
-  const router = useRouter()
+  const router = useRouter();
 
   return (
     <>
@@ -59,11 +59,29 @@ export default function Header() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem onClick={()=>{router.push('/Users')}}>Utilisateurs</DropdownMenuItem>
-            <DropdownMenuSeparator />
             <DropdownMenuItem>
               <div className="flex flex-row gap-2 items-center">
+                <div>
+                  <UserRound size={17} />
+                </div>
+                <div>Profil</div>
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                router.push("/Users");
+              }}
+            >
+              <div className="flex flex-row gap-2 items-center">
+                <div>
+                  <UsersRound size={17} />
+                </div>
+                <div>Utilisateurs</div>
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <div className="flex flex-row gap-2 items-center text-red-500">
                 <div>
                   <Power size={17} />
                 </div>
