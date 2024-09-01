@@ -70,7 +70,7 @@ export const columns: ColumnDef<Produit>[] = [
         header: "Prix Produit",
         cell: ({ row }) => {
             const amount = parseFloat(row.getValue("prixProduit"));
-            const formatted = new Intl.NumberFormat("en-US", {
+            const formatted = new Intl.NumberFormat("fr-FR", {
                 style: "currency",
                 currency: "MAD",
             }).format(amount);

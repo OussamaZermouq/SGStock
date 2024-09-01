@@ -15,15 +15,33 @@ import { getProduits } from "@/actions/actions";
 import { Produit } from "@prisma/client";
 import ProduitCard from "../Produits/ProduitCard";
 
-const AjouterProduitDialog: React.FC = ({ sendDataToParent }) => {
+
+interface AjouterProduitDialogProps {
+  sendDataToParent: (data: any) => void;
+  preSelectedProducts?: any[];
+}
+
+const AjouterProduitDialog: React.FC<AjouterProduitDialogProps> = ({
+  sendDataToParent,
+  preSelectedProducts,
+}) => {
   const [produits, setProduits] = useState<Produit[] | null>(null);
-  const [originalProducts, setOriginalProducts] =  useState<Produit[] | null>(null);
+  const [originalProducts, setOriginalProducts] = useState<Produit[] | null>(
+    null
+  );
+
+
   const [selectedProducts, setSelectedProducts] = useState<Produit[]>([]);
   const [search, setSearch] = useState("");
   // variable isSelected should be called isNotSelected
   const handleCheckboxChange = (produit: Produit, isSelected: boolean) => {
     if (isSelected) {
-      setSelectedProducts((prev) => [...prev, produit]);
+      if (selectedProducts){
+        setSelectedProducts((prev) => [...prev, produit]);
+
+      }
+      
+      setSelectedProducts((prev) => [produit]);
     } else {
       setSelectedProducts((prev) =>
         prev.filter((selectedProduct) => selectedProduct.id !== produit.id)
@@ -32,6 +50,8 @@ const AjouterProduitDialog: React.FC = ({ sendDataToParent }) => {
   };
 
   useEffect(() => {
+    console.log(preSelectedProducts)
+    setSelectedProducts(preSelectedProducts)
     const fetchData = async () => {
       const produitData = await getProduits();
       setProduits(produitData);
@@ -43,9 +63,9 @@ const AjouterProduitDialog: React.FC = ({ sendDataToParent }) => {
   function handleValueInputSearchChange(e: any) {
     const searchValue = e.target.value.toLowerCase();
     setSearch(searchValue);
-  
+
     if (searchValue === "") {
-      setProduits(originalProducts); 
+      setProduits(originalProducts);
       return;
     }
 
@@ -72,7 +92,7 @@ const AjouterProduitDialog: React.FC = ({ sendDataToParent }) => {
             <div className="grid grid-cols-3 gap-4 pt-10">
               <div>
                 <Input
-                className="shadow-lg"
+                  className="shadow-lg"
                   placeholder="Chercher un produit"
                   onChange={handleValueInputSearchChange}
                   value={search}
@@ -82,12 +102,12 @@ const AjouterProduitDialog: React.FC = ({ sendDataToParent }) => {
                 {produits &&
                   produits.map((prod) => (
                     <ProduitCard
-                    
                       produit={{
                         ...prod,
-                        isSelected: selectedProducts.some(
-                          (selectedProduct) => selectedProduct.id === prod.id
-                        ),
+                        isSelected:
+                          selectedProducts?.some(
+                            (selectedProduct) => selectedProduct.id === prod.id
+                          ) 
                       }}
                       key={prod.id}
                       onCheckBoxChange={handleCheckboxChange}

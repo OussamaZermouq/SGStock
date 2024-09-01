@@ -10,12 +10,12 @@ export default function SideNavBar() {
 
   const linkClasses = (href:string) =>
     `flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted ${
-      pathname === href ? " font-extrabold" : ""
+      pathname === href ? "font-extrabold text-emerald-500" : ""
     }`;
-    //bg-gradient-to-r from-sky-900 from-10% to-emerald-900 to-90% optional tailwind find a light and dark mode colors
+    //font-extrabold text-transparent text-8xl bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 optional tailwind find a light and dark mode colors
 
   return (
-    <div className="flex-1 border-r bg-muted/40 md:block h-full max-h-screen flex flex-col gap-4">
+    <div className="flex-1 border-r bg-muted/40 md:block h-full max-h-screen flex flex-col gap-4 rounded-r-lg">
       <nav className="grid flex-grow items-start px-2 text-base font-medium lg:px-4 gap-2 py-20">
         <Link href="/Dashboard" className={linkClasses("/Dashboard")}>
           <Home className="h-4 w-4" />

@@ -801,6 +801,8 @@ export async function getCommandeById(id: number) {
             produit: true,
           },
         },
+        client:true,
+        livraison:true
       },
     });
     return commande;
@@ -885,6 +887,115 @@ export async function ajouterCommande(data: any) {
     return {
       success: false,
       message: "Erreur lors de la création",
+    };
+  }
+}
+export async function modifierCommande( data: any) {
+  console.log(data)
+  try {
+    return await prisma.$transaction(async (prisma) => {
+      // Update the Commande
+      const updatedCommande = await prisma.commande.update({
+        where: { id: data.commandeId },
+        data: {
+          dateCommande: data.dateCommande,
+          code: data.codeCommande,
+          status: data.status,
+          client: {
+            connect: { id: Number(data.clientId) },
+          },
+        },
+        include: { produits: true }, // Include the existing products for easier comparison
+      });
+
+      // Update existing product quantities and add new products if necessary
+      const existingProduitIds = new Set(
+        updatedCommande.produits.map((p) => p.produitId)
+      );
+
+      // Update existing products and create new ones
+      const updates = data.selectedProducts.map(async (produit: any) => {
+        if (existingProduitIds.has(produit.id)) {
+          // If product already exists in the commande, update its quantity
+          await prisma.ligneCommande.update({
+            where: {
+              commandeId_produitId: {
+                commandeId: data.commandeId,
+                produitId: produit.id,
+              },
+            },
+            data: {
+              quantite: produit.orderedQuantity,
+            },
+          });
+
+          // Adjust product quantity in inventory
+          await prisma.produit.update({
+            where: { id: produit.id },
+            data: {
+              quantiteProduit: {
+                decrement: produit.orderedQuantity,
+              },
+            },
+          });
+        } else {
+          // If product is new to the commande, add it
+          await prisma.ligneCommande.create({
+            data: {
+              commandeId: data.commandeId,
+              produitId: produit.id,
+              quantite: produit.orderedQuantity,
+            },
+          });
+
+          // Adjust product quantity in inventory
+          await prisma.produit.update({
+            where: { id: produit.id },
+            data: {
+              quantiteProduit: {
+                decrement: produit.orderedQuantity,
+              },
+            },
+          });
+        }
+      });
+
+      // Wait for all updates to complete
+      await Promise.all(updates);
+
+      // Update or create Livraison if provided
+      if (data.dateLivraison && data.statusLivraison) {
+        await prisma.livraison.upsert({
+          where: { commnadeId: data.commandeId },
+          update: {
+            dateLivraison: data.dateLivraison,
+            status: data.statusLivraison,
+          },
+          create: {
+            dateLivraison: data.dateLivraison,
+            status: data.statusLivraison,
+            commande: {
+              connect: { id: data.commandeId },
+            },
+          },
+        });
+      }
+
+      return {
+        success: true,
+      };
+    });
+  } catch (error) {
+    console.error(error);
+    if (error instanceof Prisma.PrismaClientUnknownRequestError){
+      return {
+        success: false,
+        message: "Erreur lors de la mise à jour; quantite insuffisante",
+      };
+    }
+    return {
+      success: false,
+      message: "Erreur lors de la mise à jour",
     };
   }
 }

@@ -32,20 +32,25 @@ export default async function RootLayout({
         >
           {session ? (
             <SessionProvider>
-              <main className="h-screen grid grid-rows-[auto,1fr] ">
-                <header className="col-span-full bg-muted/40">
-                  <div className="grid grid-cols-12 gap-4 justify-normal content-center m-2">
+              <main className="h-screen w-screen grid grid-rows-[auto,1fr]">
+                <header className="col-span-full bg-muted/40 fixed w-full z-10">
+                  <div className="grid grid-cols-12 gap-4 justify-normal content-center p-2.5 backdrop-blur-sm">
                     <Header />
                   </div>
                   <Separator />
                 </header>
-                <div className="grid grid-cols-[auto,1fr] gap-4 ">
-                  <aside className="w-72">
-                    <SideNavBar />
-                  </aside>
-                  <section className="p-5 mx-5 overflow-auto ">
+                <div className="grid grid-cols-5 gap-4 pt-20 justify-items-start">
+                  <div>
+                    <aside className="w-72 fixed h-full z-10 bg-muted/20">
+                      <SideNavBar />
+                    </aside>
+                  </div>
+                 <div className="col-span-4 w-full">
+                  <section className="mx-5 overflow-auto">
                     {children}
                   </section>
+                 </div>
+
                 </div>
               </main>
             </SessionProvider>

@@ -24,7 +24,7 @@ export default function Header() {
 
   return (
     <>
-      <div className="col-start-1 flex items-center justify-self-end">
+      <div className="col-start-1 flex items-center justify-self-end ">
         <Image
           src={"/cropped-steelaform-LOGO.png"}
           width={60}

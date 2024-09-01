@@ -19,6 +19,7 @@ import {
   getClients,
   getCommandeById,
   getProduits,
+  modifierCommande,
 } from "@/actions/actions";
 import {
   Select,
@@ -68,24 +69,24 @@ const formSchema = z.object({
 export default function ModifierCommandeForm(commande: Commande) {
   const [client, setClient] = useState<Client[] | null>();
   const [commandeData, setCommandeData] = useState<any>(commande.commande);
-  const [livraisonEnabled, setLivraisonEnabled] = useState<Boolean>(
-    commandeData.livraison
-  );
+  const [livraisonEnabled, setLivraisonEnabled] = useState<Boolean>(commandeData.livraison);
   const [qteCommande, setQteCommande] = useState();
+  const [preSelectedProduct, setPreSelectedProduct] = useState();
+  const [selectedProducts, setSelectedProducts] = useState<any[]>(
+    commandeData.produits.map((item) => ({
+      ...item.produit,
+      orderedQuantity: item.quantite,
+    }))
+  );
+
   const { toast } = useToast();
-  
   function handleDataFromProductTable(data: any) {
     setQteCommande(data);
   }
   //
-  const [selectedProducts, setSelectedProducts] = useState<any[]>(
-    commandeData.produits.map((p: any) => {
-      return p.produit;
-    })
-  );
   function handleDataFromChild(data: any) {
+    console.log(data);
     setSelectedProducts(data);
-    console.log(selectedProducts);
   }
 
   //
@@ -100,6 +101,17 @@ export default function ModifierCommandeForm(commande: Commande) {
       setClient(clientData);
     };
     fetchData();
+    
+    //use this to predefine the data going to the table and prefill the ordered products' quantity
+    const reduceData = () => {
+      const mergedProduits = commandeData.produits.map((item) => ({
+        ...item.produit,
+        orderedQuantity: item.quantite,
+      }));
+      setPreSelectedProduct(mergedProduits)
+    };
+    reduceData()
+
   }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -116,13 +128,15 @@ export default function ModifierCommandeForm(commande: Commande) {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     let output;
+    const commandeId = commandeData.id
     if (!livraisonEnabled) {
       delete values.dateLivraison;
       delete values.statusLivraison;
-      output = await ajouterCommande({ ...values, qteCommande });
-    } else {
+      output = await modifierCommande({...values,commandeId, qteCommande, selectedProducts});
+    } 
+    else {
       if (values.dateLivraison && values.statusLivraison) {
-        output = await ajouterCommande({ ...values, qteCommande });
+        output = await modifierCommande({...values, commandeId,qteCommande, selectedProducts});
         return;
       }
       toast({
@@ -131,16 +145,19 @@ export default function ModifierCommandeForm(commande: Commande) {
         description: "Please fill in the date and status of delivery",
       });
     }
+    console.log(output)
     if (output?.success) {
       toast({
         title: "Succès",
         description: "La commande a ete cree",
       });
-    } else {
+      
+    } 
+    else if (!output?.success) {
       toast({
         variant: "destructive",
         title: "Erreur",
-        description: "Une erreur s'est produit",
+        description: "Une erreur s'est produit" || output?.message,
       });
     }
   }
@@ -150,7 +167,7 @@ export default function ModifierCommandeForm(commande: Commande) {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-10 shadow-xl p-5 rounded-xl "
+          className="space-y-10 shadow-xl p-5 rounded-xl"
         >
           <h4 className="font-bold">Information Commande</h4>
           <div className="grid grid-cols-2 gap-4">
@@ -296,7 +313,10 @@ export default function ModifierCommandeForm(commande: Commande) {
                   selectedProducts={selectedProducts}
                   onQuantitiesChange={handleDataFromProductTable}
                 />
-                <AjouterProduitDialog sendDataToParent={handleDataFromChild} />
+                <AjouterProduitDialog
+                  preSelectedProducts={selectedProducts}
+                  sendDataToParent={handleDataFromChild}
+                />
               </div>
             </div>
             <Separator className="col-span-2 my-5" />

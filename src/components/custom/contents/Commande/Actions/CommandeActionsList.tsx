@@ -61,7 +61,7 @@ export default function CommandeListActions(props: any) {
                 <div className="text-muted-foreground">
                   <p> Detail Commande </p>
                 </div>
-                <div className="grid grid-cols-2 gap-3 shadow-md border-solid border-2 border-zinc-200 rounded-lg p-3 py-5">
+                <div className="grid grid-cols-2 gap-3 shadow-md border-solid border-2  rounded-lg p-3 py-5">
                   <div>Code Commande</div>
                   <div>{props.row.getValue("code")}</div>
                   <Separator className="col-span-2" />
@@ -81,7 +81,7 @@ export default function CommandeListActions(props: any) {
                   <p> Detail Livraison </p>
                 </div>
                 {props.row.getValue("livraison") ? (
-                  <div className="grid grid-cols-2 gap-3 shadow-md border-solid border-2 border-zinc-200 rounded-lg p-3">
+                  <div className="grid grid-cols-2 gap-3 shadow-md border-solid border-2  rounded-lg p-3">
                     <div>Livraison</div>
                     <div>
                       <Badge className="flex flex-row w-fit gap-2 bg-green-500">
@@ -101,7 +101,7 @@ export default function CommandeListActions(props: any) {
                     <div>{client?.adresse}</div>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 gap-3 shadow-md border-solid border-2 border-zinc-200 rounded-lg p-3">
+                  <div className="grid grid-cols-2 gap-3 shadow-md border-solid border-2  rounded-lg p-3">
                     <div>Livraison</div>
                     <div>
                       <Badge className="flex flex-row w-fit gap-2 bg-red-500">

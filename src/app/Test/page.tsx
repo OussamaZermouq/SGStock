@@ -1,239 +1,254 @@
-import Link from "next/link"
+// pages/index.js
+"use client";
+import React, { useEffect, useState } from "react";
 import {
-  Bell,
-  CircleUser,
-  Home,
-  LineChart,
-  Menu,
-  Package,
-  Package2,
-  Search,
-  ShoppingCart,
-  Users,
-} from "lucide-react"
+  Document,
+  Page,
+  Text,
+  View,
+  Image as PdfImage,
+  StyleSheet,
+  PDFDownloadLink,
+  PDFViewer,
+} from "@react-pdf/renderer";
+import { Button } from "@/components/ui/button";
+import { Commande, Produit } from "@prisma/client";
+import { getCommandeById } from "@/actions/actions";
+const styles = StyleSheet.create({
+  page: {
+    flexDirection: "column",
+    padding: 20,
+    flexGrow: 1,
+    fontSize: 12,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  image: {
+    width: 80,
+    height: 80,
+  },
+  section: {
+    gap: 5,
+    marginTop: 50,
+    margin: 10,
+    padding: 10,
+    flexGrow: 1,
+  },
+  //table
+  table: {
+    marginTop: 100,
+    display: "table",
+    width: "auto",
+    borderWidth: 1,
+    borderRightWidth: 0,
+    borderBottomWidth: 0,
+  },
+  tableRow: {
+    margin: "auto",
+    flexDirection: "row",
+  },
+  tableCol: {
+    width: "20%",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderLeftWidth: 0,
+    borderTopWidth: 0,
+  },
+  tableCell: {
+    margin: 5,
+    fontSize: 10,
+  },
+  fullWidthCol: {
+    backgroundColor:"#A9A9A9",
+    width: "80%", // Span 3 columns
+    height:"40",
+    textAlign: "right",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderLeftWidth: 0,
+    borderTopWidth: 0,
+  },
+  totalPrice: {
+    marginTop: 15,
+    margin: 5,
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+});
+interface ProduitQte {
+  produit: Produit;
+  quantite: number;
+}
+export default function Home() {
+  const [randomText, setRandomText] = useState("");
+  const [loaded, setLoaded] = useState(false);
+  const [commande, setCommande] = useState<any>();
+  const [produits, setProduits] = useState<ProduitQte[]>();
+  const [total, setTotal] = useState(0);
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getCommandeById(4);
+      console.log(data);
+      setCommande(data);
+      let sum = 0;
+      const produitsData = data.produits.map((value) => {
+        sum += value.produit.prixProduit * value.quantite;
+        const output = {
+          produit: value.produit,
+          quantite: value.quantite,
+        };
+        return output;
+      });
+      setTotal(sum);
+      console.log(produitsData);
+      setProduits(produitsData);
+    };
+    fetchData();
+    setLoaded(true);
+  }, []);
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+  // Create Document Component
+  const MyDocument = (commande: Commande) => {
+    return (
+      <Document>
+        <Page size="A4" style={styles.page}>
+          {/* Header */}
+          <View style={styles.header}>
+            <PdfImage
+              src={"/cropped-steelaform-LOGO.png"}
+              style={styles.image}
+            ></PdfImage>
+            <View
+              style={{
+                flexDirection: "column",
+              }}
+            >
+              <Text>
+                Le {commande.commande.dateCreation.toLocaleDateString()}
+              </Text>
+              <Text>ADRESSE STEELAFORM</Text>
+            </View>
+          </View>
+          {/* Content */}
+          <View style={styles.section}>
+            <Text style={{ fontSize: 15 }}>
+              Bon de commande : Nº {commande.commande.code}
+            </Text>
+            <Text>
+              Date commande :{" "}
+              {commande.commande.dateCommande.toLocaleDateString()}
+            </Text>
+            {commande.commande.livraison && (
+              <Text>
+                Date livraison :{" "}
+                {commande.commande.livraison.dateLivraison.toLocaleDateString()}
+              </Text>
+            )}
+            <Text></Text>
+            {/* Table Header */}
+            <View style={styles.table}>
+              <View style={styles.tableRow}>
+                <View style={styles.tableCol}>
+                  <Text style={styles.tableCell}>Code Produit</Text>
+                </View>
+                <View style={styles.tableCol}>
+                  <Text style={styles.tableCell}>Nom Produit</Text>
+                </View>
+                <View style={styles.tableCol}>
+                  <Text style={styles.tableCell}>Description</Text>
+                </View>
+                <View style={styles.tableCol}>
+                  <Text style={styles.tableCell}>Qte. Commande</Text>
+                </View>
+                <View style={styles.tableCol}>
+                  <Text style={styles.tableCell}>Prix Unitaire</Text>
+                </View>
+              </View>
+              {/* Table Rows */}
+              {produits?.map((row, index) => {
+                console.log(row);
+                return (
+                  <View style={styles.tableRow} key={index}>
+                    <View style={styles.tableCol}>
+                      <Text style={styles.tableCell}>
+                        {row.produit.codeProduit}
+                      </Text>
+                    </View>
+                    <View style={styles.tableCol}>
+                      <Text style={styles.tableCell}>
+                        {row.produit.nomProduit}
+                      </Text>
+                    </View>
+                    <View style={styles.tableCol}>
+                      <Text style={styles.tableCell}>
+                        {row.produit.noteProduit}
+                      </Text>
+                    </View>
 
-export default function Dashboard() {
+                    <View style={styles.tableCol}>
+                      <Text style={styles.tableCell}>{row.quantite}</Text>
+                    </View>
+                    <View style={styles.tableCol}>
+                      <Text style={styles.tableCell}>
+                        {new Intl.NumberFormat("us-US", {
+                          style: "currency",
+                          currency: "MAD",
+                        }).format(row.produit.prixProduit)}
+                      </Text>
+                    </View>
+                  </View>
+                );
+              })}
+              <View style={styles.tableRow}>
+                <View style={styles.fullWidthCol}>
+                  <Text style={styles.totalPrice}>Prix Total</Text>
+                </View>
+                <View style={{...styles.tableCol, 'backgroundColor':'#A9A9A9'}}>
+                  <Text style={styles.totalPrice}>
+                    {new Intl.NumberFormat("us-US", {
+                      style: "currency",
+                      currency: "MAD",
+                    }).format(total)}
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </Page>
+      </Document>
+    );
+  };
+
+  // Function to generate random text
+  const generateRandomText = () => {
+    const randomWords = [
+      "Lorem ipsum dolor sit amet",
+      "consectetur adipiscing elit",
+      "sed do eiusmod tempor incididunt",
+      "ut labore et dolore magna aliqua",
+      "Ut enim ad minim veniam",
+    ];
+    return randomWords[Math.floor(Math.random() * randomWords.length)];
+  };
+
+  // Handle button click to generate random text
+  const handleClick = () => {
+    setRandomText(generateRandomText());
+  };
+
   return (
-    <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-      <div className="hidden border-r bg-muted/40 md:block">
-        <div className="flex h-full max-h-screen flex-col gap-2">
-          <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-            <Link href="/" className="flex items-center gap-2 font-semibold">
-              <Package2 className="h-6 w-6" />
-              <span className="">Acme Inc</span>
-            </Link>
-            <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
-              <Bell className="h-4 w-4" />
-              <span className="sr-only">Toggle notifications</span>
-            </Button>
-          </div>
-          <div className="flex-1">
-            <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <Home className="h-4 w-4" />
-                Dashboard
-              </Link>
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <ShoppingCart className="h-4 w-4" />
-                Orders
-                <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                  6
-                </Badge>
-              </Link>
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
-              >
-                <Package className="h-4 w-4" />
-                Products{" "}
-              </Link>
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <Users className="h-4 w-4" />
-                Customers
-              </Link>
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <LineChart className="h-4 w-4" />
-                Analytics
-              </Link>
-            </nav>
-          </div>
-          <div className="mt-auto p-4">
-            <Card x-chunk="dashboard-02-chunk-0">
-              <CardHeader className="p-2 pt-0 md:p-4">
-                <CardTitle>Upgrade to Pro</CardTitle>
-                <CardDescription>
-                  Unlock all features and get unlimited access to our support
-                  team.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
-                <Button size="sm" className="w-full">
-                  Upgrade
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
+    <div>
+      <h1>Generate PDF with Random Text</h1>
+      <Button onClick={handleClick}>Generate PDF</Button>
+      {commande && (
+        <div>
+          <PDFViewer showToolbar={true} width={1000} height={1000}>
+            <MyDocument commande={commande} />
+          </PDFViewer>
         </div>
-      </div>
-      <div className="flex flex-col">
-        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="shrink-0 md:hidden"
-              >
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle navigation menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="flex flex-col">
-              <nav className="grid gap-2 text-lg font-medium">
-                <Link
-                  href="#"
-                  className="flex items-center gap-2 text-lg font-semibold"
-                >
-                  <Package2 className="h-6 w-6" />
-                  <span className="sr-only">Acme Inc</span>
-                </Link>
-                <Link
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <Home className="h-5 w-5" />
-                  Dashboard
-                </Link>
-                <Link
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl bg-muted px-3 py-2 text-foreground hover:text-foreground"
-                >
-                  <ShoppingCart className="h-5 w-5" />
-                  Orders
-                  <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                    6
-                  </Badge>
-                </Link>
-                <Link
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <Package className="h-5 w-5" />
-                  Products
-                </Link>
-                <Link
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <Users className="h-5 w-5" />
-                  Customers
-                </Link>
-                <Link
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <LineChart className="h-5 w-5" />
-                  Analytics
-                </Link>
-              </nav>
-              <div className="mt-auto">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Upgrade to Pro</CardTitle>
-                    <CardDescription>
-                      Unlock all features and get unlimited access to our
-                      support team.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Button size="sm" className="w-full">
-                      Upgrade
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            </SheetContent>
-          </Sheet>
-          <div className="w-full flex-1">
-            <form>
-              <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="search"
-                  placeholder="Search products..."
-                  className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
-                />
-              </div>
-            </form>
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full">
-                <CircleUser className="h-5 w-5" />
-                <span className="sr-only">Toggle user menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </header>
-        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-          <div className="flex items-center">
-            <h1 className="text-lg font-semibold md:text-2xl">Inventory</h1>
-          </div>
-          <div
-            className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm" x-chunk="dashboard-02-chunk-1"
-          >
-            <div className="flex flex-col items-center gap-1 text-center">
-              <h3 className="text-2xl font-bold tracking-tight">
-                You have no products
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                You can start selling as soon as you add a product.
-              </p>
-              <Button className="mt-4">Add Product</Button>
-            </div>
-          </div>
-        </main>
-      </div>
+      )}
     </div>
-  )
+  );
 }
