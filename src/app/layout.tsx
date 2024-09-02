@@ -34,19 +34,19 @@ export default async function RootLayout({
             <SessionProvider>
               <main className="h-screen w-screen grid grid-rows-[auto,1fr]">
                 <header className="col-span-full bg-muted/40 fixed w-full z-10">
-                  <div className="grid grid-cols-12 gap-4 justify-normal content-center p-2.5 backdrop-blur-sm">
+                  <div className="grid grid-cols-12 gap-4 justify-normal content-center p-2.5 backdrop-blur-sm shadow-lg">
                     <Header />
                   </div>
                   <Separator />
                 </header>
                 <div className="grid grid-cols-5 gap-4 pt-20 justify-items-start">
                   <div>
-                    <aside className="w-72 fixed h-full z-10 bg-muted/20">
+                    <aside className="w-72 fixed h-full z-10 bg-muted/20 shadow-lg">
                       <SideNavBar />
                     </aside>
                   </div>
                  <div className="col-span-4 w-full">
-                  <section className="mx-5 overflow-auto">
+                  <section className=" overflow-auto">
                     {children}
                   </section>
                  </div>

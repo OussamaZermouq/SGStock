@@ -10,7 +10,7 @@ export default function SideNavBar() {
 
   const linkClasses = (href:string) =>
     `flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted ${
-      pathname === href ? "font-extrabold text-emerald-500" : ""
+      pathname === href ? "font-extrabold text-cyan-500" : ""
     }`;
     //font-extrabold text-transparent text-8xl bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 optional tailwind find a light and dark mode colors
 

@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Commande, Produit } from "@prisma/client";
 import { getCommandeById } from "@/actions/actions";
+import { Printer } from "lucide-react";
 const styles = StyleSheet.create({
   page: {
     flexDirection: "column",
@@ -60,9 +61,9 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   fullWidthCol: {
-    backgroundColor:"#A9A9A9",
+    backgroundColor: "#A9A9A9",
     width: "80%", // Span 3 columns
-    height:"40",
+    height: "40",
     textAlign: "right",
     borderStyle: "solid",
     borderWidth: 1,
@@ -80,17 +81,18 @@ interface ProduitQte {
   produit: Produit;
   quantite: number;
 }
-export default function Home() {
+export default function CommandeExport(commandeProps: Commande) {
   const [randomText, setRandomText] = useState("");
   const [loaded, setLoaded] = useState(false);
-  const [commande, setCommande] = useState<any>();
+  const [commande, setCommande] = useState<any>(commandeProps);
+  console.log(commande);
   const [produits, setProduits] = useState<ProduitQte[]>();
   const [total, setTotal] = useState(0);
   useEffect(() => {
     const fetchData = async () => {
       const data = await getCommandeById(4);
       console.log(data);
-      setCommande(data);
+      //setCommande(data);
       let sum = 0;
       const produitsData = data.produits.map((value) => {
         sum += value.produit.prixProduit * value.quantite;
@@ -108,8 +110,7 @@ export default function Home() {
     setLoaded(true);
   }, []);
 
-  // Create Document Component
-  const MyDocument = (commande: Commande) => {
+  const MyDocument = () => {
     return (
       <Document>
         <Page size="A4" style={styles.page}>
@@ -125,7 +126,7 @@ export default function Home() {
               }}
             >
               <Text>
-                Le {commande.commande.dateCreation.toLocaleDateString()}
+                Le {commande.commandeProps.dateCreation.toLocaleDateString()}
               </Text>
               <Text>ADRESSE STEELAFORM</Text>
             </View>
@@ -133,16 +134,16 @@ export default function Home() {
           {/* Content */}
           <View style={styles.section}>
             <Text style={{ fontSize: 15 }}>
-              Bon de commande : Nº {commande.commande.code}
+              Bon de commande : Nº {commande.commandeProps.code}
             </Text>
             <Text>
               Date commande :{" "}
-              {commande.commande.dateCommande.toLocaleDateString()}
+              {commande.commandeProps.dateCommande.toLocaleDateString()}
             </Text>
-            {commande.commande.livraison && (
+            {commande.commandeProps.livraison && (
               <Text>
                 Date livraison :{" "}
-                {commande.commande.livraison.dateLivraison.toLocaleDateString()}
+                {commande.commandeProps.livraison.dateLivraison.toLocaleDateString()}
               </Text>
             )}
             <Text></Text>
@@ -204,7 +205,9 @@ export default function Home() {
                 <View style={styles.fullWidthCol}>
                   <Text style={styles.totalPrice}>Prix Total</Text>
                 </View>
-                <View style={{...styles.tableCol, 'backgroundColor':'#A9A9A9'}}>
+                <View
+                  style={{ ...styles.tableCol, backgroundColor: "#A9A9A9" }}
+                >
                   <Text style={styles.totalPrice}>
                     {new Intl.NumberFormat("us-US", {
                       style: "currency",
@@ -222,12 +225,13 @@ export default function Home() {
 
   return (
     <div>
-      <h1>Generate PDF with Random Text</h1>
       {commande && (
         <div>
-          <PDFDownloadLink document={<MyDocument commande={commande} />}>
-            <Button>Download</Button>
-          </PDFDownloadLink >
+          <PDFDownloadLink document={<MyDocument />} fileName={commande.commandeProps.code}>
+            <Button>
+              <Printer />
+            </Button>
+          </PDFDownloadLink>
         </div>
       )}
     </div>

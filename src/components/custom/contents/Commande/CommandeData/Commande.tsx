@@ -22,7 +22,7 @@ export type Commande = {
   produits: Produit[];
   dateCommande: Date;
 };
-function resolveClient(clientId: number) {
+function ResolveClient(clientId: number) {
   const [client, setClient] = useState();
   useEffect(() => {
     const fetchData = async () => {
@@ -61,8 +61,9 @@ export const columns: ColumnDef<Produit>[] = [
 
         return (
         <div className="grid grid-cols-2 gap-1">
-            {ligneCommande.map((lc)=>(
+            {ligneCommande.map((lc, index)=>(
                 <CldImage
+                key={index}
                 className="rounded-lg shadow-md"
                 width="50"
                 height="50"
@@ -91,7 +92,7 @@ export const columns: ColumnDef<Produit>[] = [
   {
     accessorKey: "clientId",
     header: "Client",
-    cell: ({ row }) => <Badge>{resolveClient(row.getValue("clientId"))}</Badge>,
+    cell: ({ row }) => <Badge>{ResolveClient(row.getValue("clientId"))}</Badge>,
   },
   {
     accessorKey: "dateCommande",

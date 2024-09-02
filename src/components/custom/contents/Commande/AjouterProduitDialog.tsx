@@ -50,7 +50,6 @@ const AjouterProduitDialog: React.FC<AjouterProduitDialogProps> = ({
   };
 
   useEffect(() => {
-    console.log(preSelectedProducts)
     setSelectedProducts(preSelectedProducts)
     const fetchData = async () => {
       const produitData = await getProduits();
@@ -58,7 +57,7 @@ const AjouterProduitDialog: React.FC<AjouterProduitDialogProps> = ({
       setOriginalProducts(produitData);
     };
     fetchData();
-  }, []);
+  }, [preSelectedProducts]);
 
   function handleValueInputSearchChange(e: any) {
     const searchValue = e.target.value.toLowerCase();

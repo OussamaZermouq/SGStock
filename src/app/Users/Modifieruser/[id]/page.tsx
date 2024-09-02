@@ -21,7 +21,7 @@ export default async function Home() {
           ) : (
             <div>
               <p className="text-lg font-bold">
-                Vous n'avez pas l'autorisation de voir cette page{" "}
+                Vous n`&apos;`avez pas l`&apos;`autorisation de voir cette page{" "}
               </p>
             </div>
           )}

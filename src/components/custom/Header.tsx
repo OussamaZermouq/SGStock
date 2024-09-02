@@ -17,11 +17,20 @@ import { Power, UserRound, UsersRound } from "lucide-react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { logOut } from "@/app/lib/actions";
 
 export default function Header() {
   const session = useSession();
   const router = useRouter();
 
+  const handleSignOut = async () => {
+    try {
+      await logOut();
+      // Redirect or update UI after sign out, if needed
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
   return (
     <>
       <div className="col-start-1 flex items-center justify-self-end ">
@@ -80,7 +89,7 @@ export default function Header() {
               </div>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSignOut}>
               <div className="flex flex-row gap-2 items-center text-red-500">
                 <div>
                   <Power size={17} />

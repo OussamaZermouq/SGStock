@@ -17,37 +17,44 @@ import {
   deleteMatiere,
   deleteProduit,
   getClientById,
+  getCommandeById,
 } from "@/actions/actions";
 import { useToast } from "@/components/ui/use-toast";
 import ModifierCommandeForm from "../ModifierCommandeForm";
 import { Client } from "@prisma/client";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Check, Cross, X } from "lucide-react";
+import { Check, Cross, Printer, X } from "lucide-react";
 import { DataTable } from "../../common/DataTable";
 import { columns } from "../../Produits/ProduitData/Produit";
 import ProduitCommandeDetailsPreviewTable from "../ProduitCommandeDetailsPreviewTable";
 import { useRouter } from "next/navigation";
+import CommandeExport from "../Exports/CommandeExportPdf";
 
 export default function CommandeListActions(props: any) {
   const { toast } = useToast();
   const router = useRouter();
   const [client, setClient] = React.useState<Client>();
+  //used for pdf exports
+  const [commande, setCommande] = React.useState<any>([]);
   React.useEffect(() => {
-    const fetchClient = async () => {
-      await getClientById(parseInt(props.row.getValue("clientId"))).then(
-        (client) => {
+    const fetchData = async () => {
+      await getClientById(parseInt(props.row.getValue("clientId")))
+      .then((client) => {
           setClient(client);
-        }
+        });
+
+      const commandeData = await getCommandeById(
+        parseInt(props.row.getValue("id"))
       );
+
+      setCommande(commandeData);
     };
-    fetchClient();
-  }, [props.row.getValue("clientId")]);
-  
+    fetchData();
+  }, [props.row]);
 
   return (
     <div className="flex space-x-4">
-      
       <div>
         <Dialog>
           <DialogTrigger>{<RemoveRedEyeIcon />}</DialogTrigger>
@@ -118,19 +125,26 @@ export default function CommandeListActions(props: any) {
                 )}
               </div>
               <div className="my-5">
-                <p className="text-muted-foreground">
-                    Detail Produits
-                </p>
+                <p className="text-muted-foreground">Detail Produits</p>
               </div>
               <div className="border rounded-xl">
-              <ProduitCommandeDetailsPreviewTable produits={props.row.getValue('produits')}/>
-
+                <ProduitCommandeDetailsPreviewTable
+                  produits={props.row.getValue("produits")}
+                />
               </div>
             </div>
             <DialogFooter className="sm:justify-end">
-                <Button onClick={()=>{router.push(`/Commande/Modifiercommande/${props.row.getValue("id")}`)}}>Modifier Commande</Button>
-                <Button variant={'destructive'}>Supprimer Commande</Button>
-
+              {commande && <CommandeExport commandeProps={commande} />}
+              <Button
+                onClick={() => {
+                  router.push(
+                    `/Commande/Modifiercommande/${props.row.getValue("id")}`
+                  );
+                }}
+              >
+                Modifier Commande
+              </Button>
+              <Button variant={"destructive"}>Supprimer Commande</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

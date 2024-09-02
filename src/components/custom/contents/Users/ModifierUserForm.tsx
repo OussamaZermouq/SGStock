@@ -96,7 +96,7 @@ export default function ModifierUserForm() {
     } else {
       router.push("/Users");
     }
-  }, [params?.id, form]);
+  }, [params?.id, form, router]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     let formData
