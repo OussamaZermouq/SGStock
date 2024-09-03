@@ -90,7 +90,7 @@ export default function CommandeExport(commandeProps: Commande) {
   const [total, setTotal] = useState(0);
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getCommandeById(4);
+      const data = await getCommandeById(commande.commandeProps.id);
       console.log(data);
       //setCommande(data);
       let sum = 0;
@@ -110,7 +110,7 @@ export default function CommandeExport(commandeProps: Commande) {
     setLoaded(true);
   }, []);
 
-  const MyDocument = () => {
+  const CommandeExport = () => {
     return (
       <Document>
         <Page size="A4" style={styles.page}>
@@ -227,7 +227,7 @@ export default function CommandeExport(commandeProps: Commande) {
     <div>
       {commande && (
         <div>
-          <PDFDownloadLink document={<MyDocument />} fileName={commande.commandeProps.code}>
+          <PDFDownloadLink document={<CommandeExport />} fileName={"BON COMMANDE " + commande.commandeProps.code}>
             <Button>
               <Printer />
             </Button>
