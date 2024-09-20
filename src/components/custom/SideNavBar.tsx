@@ -10,7 +10,7 @@ export default function SideNavBar() {
 
   const linkClasses = (href:string) =>
     `flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted ${
-      pathname === href ? "font-extrabold text-teal-500" : ""
+      pathname.startsWith(href) ? "font-extrabold text-teal-500" : ""
     }`;
     //font-extrabold text-transparent text-8xl bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 optional tailwind find a light and dark mode colors
 
@@ -23,11 +23,11 @@ export default function SideNavBar() {
         </Link>
         <Link href="/Commande" className={linkClasses("/Commande")}>
           <ShoppingCart className="h-4 w-4" />
-          Orders
+          Commandes
         </Link>
         <Link href="/Produits" className={linkClasses("/Produits")}>
           <Package className="h-4 w-4" />
-          Products
+          Produits
         </Link>
         <Link href="/Categories" className={linkClasses("/Categories")}>
           <Shapes className="h-4 w-4"/>
@@ -35,7 +35,7 @@ export default function SideNavBar() {
         </Link>
         <Link href="/Clients" className={linkClasses("/Clients")}>
           <Users className="h-4 w-4" />
-          Customers
+          Clients
         </Link>
         <Link href="/Fournisseurs" className={linkClasses("/Fournisseurs")}>
           <Factory className="h-4 w-4" />

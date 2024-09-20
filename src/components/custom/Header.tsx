@@ -26,7 +26,6 @@ export default function Header() {
   const handleSignOut = async () => {
     try {
       await logOut();
-      // Redirect or update UI after sign out, if needed
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -76,19 +75,24 @@ export default function Header() {
                 <div>Profil</div>
               </div>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                router.push("/Users");
-              }}
-            >
-              <div className="flex flex-row gap-2 items-center">
-                <div>
-                  <UsersRound size={17} />
-                </div>
-                <div>Utilisateurs</div>
+            {session.data?.user?.role === "ADMIN" && (
+              <div>
+                <DropdownMenuItem
+                  onClick={() => {
+                    router.push("/Users");
+                  }}
+                >
+                  <div className="flex flex-row gap-2 items-center">
+                    <div>
+                      <UsersRound size={17} />
+                    </div>
+                    <div>Utilisateurs</div>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
               </div>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
+            )}
+
             <DropdownMenuItem onClick={handleSignOut}>
               <div className="flex flex-row gap-2 items-center text-red-500">
                 <div>

@@ -53,6 +53,7 @@ export default async function ListCommande() {
             data={data}
             buttonTitle="Ajouter Commande"
           />
+            
         ) : (
           <h3>Erreur lors de chargement de la liste des commandes</h3>
         )}

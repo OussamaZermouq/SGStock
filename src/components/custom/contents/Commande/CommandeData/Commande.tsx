@@ -13,6 +13,9 @@ import { getClientById } from "@/actions/actions";
 import { useEffect, useState } from "react";
 import CommandeListActions from "../Actions/CommandeActionsList";
 import { CldImage } from "next-cloudinary";
+import HideImageIcon from "@mui/icons-material/HideImage";
+import { ImageOff } from "lucide-react";
+
 export type Commande = {
   id: number;
   codeCommande: string | null;
@@ -57,20 +60,38 @@ export const columns: ColumnDef<Produit>[] = [
     id: "produits",
     header: "Produits",
     cell: ({ row }) => {
-        const ligneCommande:any[] = row.getValue('produits');
+      const ligneCommande: any[] = row.getValue("produits");
 
-        return (
+      return (
         <div className="grid grid-cols-2 gap-1">
-            {ligneCommande.map((lc, index)=>(
+          {ligneCommande.map((lc, index) => {
+            if (lc.produit.imageProduit) {
+              return (
                 <CldImage
-                key={index}
-                className="rounded-lg shadow-md"
-                width="50"
-                height="50"
-                src={lc.produit.imageProduit}
-                alt="Image Produit"
+                  key={index}
+                  className="rounded-lg shadow-md"
+                  width="50"
+                  height="50"
+                  src={lc.produit.imageProduit}
+                  alt="Image Produit"
                 />
-            ))}
+              );
+            } else {
+              return(
+              <div key={index}>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <ImageOff className="text-5xl" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Aucune photo pour ce produit</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>)
+            }
+          })}
         </div>
       );
     },

@@ -82,7 +82,7 @@ model Commande {
 model Livraison {
   id            Int             @id @default(autoincrement())
   dateLivraison DateTime
-  status        LivraisonStatus @default(EnAttente)
+  status        LivraisonStatus 
   commnadeId    Int             @unique
   commande      Commande        @relation(fields: [commnadeId], references: [id])
 }
@@ -135,7 +135,7 @@ enum ClientType {
 }
 
 enum LivraisonStatus {
-  EnAttente
+  EnCours
   Livre
   Annule
 }
@@ -159,7 +159,6 @@ model Account {
   access_token      String? @db.Text
   expires_at        Int?
   token_type        String?
-  scope             String?
   id_token          String? @db.Text
   session_state     String?
 

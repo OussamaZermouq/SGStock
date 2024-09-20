@@ -405,8 +405,8 @@ export default function ModifierCommandeForm(commande: Commande) {
             <div>
               <h6 className="muted">
                 <p className="text-sm text-muted-foreground">
-                  <HelpOutlineIcon /> L`&apos;`adresse de la livraison sera
-                  automatiquement associee avec l`&apos;`adresse du client.
+                  <HelpOutlineIcon /> L&apos; adresse de la livraison sera
+                  automatiquement associee avec l&apos; adresse du client.
                 </p>
               </h6>
             </div>

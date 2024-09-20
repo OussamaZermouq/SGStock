@@ -11,8 +11,6 @@ export type Fournisseur = {
     adresse:string,
 }
 
-
-
 export const columns: ColumnDef<Fournisseur>[] = [
     {
       accessorKey: "id",
